@@ -1,0 +1,4 @@
+func endl:      # 定义的函数可以被导入
+    push "\n";
+    print;
+endfunc
