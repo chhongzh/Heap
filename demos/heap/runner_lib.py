@@ -1,0 +1,2 @@
+class RaiseSignal(Exception):
+    pass
