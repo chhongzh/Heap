@@ -1,4 +1,5 @@
 from heap.ui.i18n import i18n
+from locale import getlocale
 
 from rich.console import Console
 from prompt_toolkit import PromptSession, prompt
@@ -15,7 +16,7 @@ from heap.error import InputError
 
 from heap.checker import syntax_check, MESSAGE
 
-i = i18n("heap/lang/zh_cn.json", "heap/lang/zh_CN.json")
+i = i18n(f"heap/lang/{getlocale()[0]}.json", "heap/lang/zh_CN.json")
 
 t = i.t
 
@@ -43,7 +44,7 @@ def bottom_tool_bar():
         return t("解释器.提示框.退出")
     err, pos = syntax_check(session.default_buffer.document.text)
     if err:
-        return f"位于:{pos},存在{MESSAGE[err]}问题. "
+        return t(f"解释器.错误消息.{err}")
     else:
         return t("解释器.提示框.信息")
 
@@ -87,7 +88,5 @@ while True:
     r.run()
 
     print(">", ast_tree.stack)
-    # print(">", ast_tree.fn_ctx)
-    # print(">", ast_tree.var_ctx)
 
     del l, b
