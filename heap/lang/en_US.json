@@ -4,7 +4,14 @@
       "退出": "Exit interpreter.",
       "信息": "Heap Lang V1.3. Type \"exit\" to exit interpreter."
     },
-
+    "错误消息": {
+      "未打开func": "Too much endfunc.",
+      "未关闭func": "Missing endfunc.",
+      "未打开command": "Too much command.",
+      "未关闭command": "Missing command.",
+      "不是数字": "Not an number.",
+      "": ""
+    },
     "版本信息": "[b]Heap[/b] lang [b]V1.3[/b]"
   }
 }
