@@ -109,6 +109,4 @@ print()
 print("安装完成!")
 print()
 
-print("启动interpreter:`python3 cli.py`")
-print("运行文件:`python3 main.py <file>`")
-print("编译文件:`python3 compiler.py <file>`")
+print("输入`python3 cli.py`启动Heap")

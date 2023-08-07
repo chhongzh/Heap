@@ -5,8 +5,8 @@ Heap Lang!
 
 from time import time
 
-from .. import Lexer, Builder
-from ..asts import (
+from . import Lexer, Builder
+from .asts import (
     Call,
     Get,
     Include,
@@ -23,7 +23,7 @@ from ..asts import (
     Input,
 )
 
-from ..loader import loader
+from .loader import loader
 
 
 class Compiler:
