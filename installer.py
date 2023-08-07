@@ -42,6 +42,9 @@ except ImportError:
     print("下载并安装requests")
     install_module("requests")
     print("安装成功")
+    print("下载并安装click")
+    install_module("click")
+    print("安装成功")
 
     import rich, prompt_toolkit, requests
 
