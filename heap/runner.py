@@ -1,3 +1,4 @@
+from os import getcwd
 from .error import *
 from .asts import (
     Div,
@@ -19,7 +20,7 @@ from .asts import (
     Include,
     Command,
 )
-from os.path import exists
+from os.path import exists, dirname, join
 from inspect import isfunction
 from . import hook
 from .loader import loader
@@ -29,8 +30,9 @@ from importlib import import_module
 
 
 class Runner:
-    def __init__(self, root: Root):
+    def __init__(self, root: Root, path: str):
         self.root = root
+        self.include_path = [path]
 
     def run(self):
         self.visits(self.root.body, self.root)
@@ -85,6 +87,9 @@ class Runner:
                     father.fn_ctx[name] = md.__dict__[name]
             return
 
+        path = join(self.include_path[-1], path)
+        self.include_path.append(dirname(path))
+
         if not exists(path):
             hook._raise_error(IncludeError(path, -1, "Not a file."))
             return
@@ -96,6 +101,8 @@ class Runner:
         builder = Builder(toks)
         ast = builder.parase()
         self.visits(ast.body, father)
+
+        self.include_path.pop()
 
     def expr_args(self, args: list, father: Func | Root, delete=True):
         replace_count = args.count(Replace)

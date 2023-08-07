@@ -11,6 +11,7 @@ def __wrapper():
 def run(filepath):
     from heap.loader import loader
     from heap import Lexer, Builder, Runner
+    from os.path import dirname
 
     dt = loader(filepath)
 
@@ -20,7 +21,7 @@ def run(filepath):
     b = Builder(toks)
     root = b.parase()
 
-    r = Runner(root)
+    r = Runner(root, dirname(filepath))
     r.run()
 
 
