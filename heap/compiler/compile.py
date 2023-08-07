@@ -121,7 +121,6 @@ class Compiler:
         self.append_comment("END MAIN!")
         self.append_statement("")
 
-        print("Compile Done! Errors:0 Warnings:0 Info:0")
         return self.body
 
     def get_space(self):
