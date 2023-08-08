@@ -1,0 +1,15 @@
+set i 10;
+
+get i;
+
+while $ notequal 0:
+    get i;
+    print;
+
+    get i;
+    push 1;
+    sub;
+
+    set i $;
+    get i; # Beacause the top
+endwhile
