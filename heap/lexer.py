@@ -110,7 +110,12 @@ class Lexer:
             cache.append(self.current)
             self.advance()
 
-        return "".join(cache)
+        k = "".join(cache)
+
+        if k == "null":
+            return None
+
+        return k
 
     def comment_match(self):
         lst = ["\n", "#"]
