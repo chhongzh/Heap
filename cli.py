@@ -58,6 +58,11 @@ def compile(input_filepath, output_filepath):
 def interpreter():
     from heap.ui.i18n import i18n
     from locale import getlocale
+    from os.path import dirname
+    from os import getcwd, chdir
+
+    old = getcwd()
+    chdir(dirname(__file__))
 
     from rich.console import Console
     from prompt_toolkit import PromptSession, prompt
@@ -108,6 +113,7 @@ def interpreter():
     def rprompt():
         return f"{ln}"
 
+    chdir(old)
     while True:
         try:
             code = session.prompt(
@@ -139,7 +145,7 @@ def interpreter():
         ast_tree.var_ctx = var_ctx  # 钩子
         ast_tree.command = command  # 钩子
 
-        r = Runner(ast_tree)
+        r = Runner(ast_tree, old)
         r.run()
 
         print(">", ast_tree.stack)
