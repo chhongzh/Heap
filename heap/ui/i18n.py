@@ -1,3 +1,9 @@
+"""
+Heap Lang - i18n
+
+面对国际化
+"""
+
 import json
 import os.path
 
