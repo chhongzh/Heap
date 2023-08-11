@@ -19,6 +19,7 @@ from .asts import (
     If,
     Include,
     Command,
+    While,
 )
 from os.path import exists, dirname, join
 from inspect import isfunction
@@ -56,6 +57,8 @@ class Runner:
             hook._print(self.try_pop(father))
         elif isinstance(node, Call):
             self.call(node, father)
+        elif isinstance(node, While):
+            self.expr_while(node, father)
         elif isinstance(node, Return):
             return self.expr_args(node.vals, father)
         elif isinstance(node, Sub):
@@ -133,19 +136,22 @@ class Runner:
                 ):
                     l1, op, l2 = self.expr_args([l1, op, l2], father, False)
 
-                    if op == "EQUAL" and l1 == l2:
+                    if op == "equal" and l1 == l2:
                         self.visits(body, father)
                         break
-                    elif op == "BIGEQUAL" and l1 >= l2:
+                    elif op == "bigequal" and l1 >= l2:
                         self.visits(body, father)
                         break
-                    elif op == "SMALLER" and l1 < l2:
+                    elif op == "small" and l1 < l2:
                         self.visits(body, father)
                         break
-                    elif op == "SMALLEQUAL" and l1 <= l2:
+                    elif op == "big" and l1 > l2:
                         self.visits(body, father)
                         break
-                    elif op == "NOTEQUAL" and l1 != l2:
+                    elif op == "smallequal" and l1 <= l2:
+                        self.visits(body, father)
+                        break
+                    elif op == "notequal" and l1 != l2:
                         self.visits(body, father)
                         break
                 else:
@@ -155,25 +161,73 @@ class Runner:
                 for l1, op, l2, body in zip(node.l1s, node.ops, node.l2s, node.bodys):
                     l1, op, l2 = self.expr_args([l1, op, l2], father, False)
 
-                    if op == "EQUAL" and l1 == l2:
+                    if op == "equal" and l1 == l2:
                         self.visits(body, father)
                         break
-                    elif op == "BIGEQUAL" and l1 >= l2:
+                    elif op == "bigequal" and l1 >= l2:
                         self.visits(body, father)
                         break
-                    elif op == "SMALLER" and l1 < l2:
+                    elif op == "small" and l1 < l2:
                         self.visits(body, father)
                         break
-                    elif op == "SMALLEQUAL" and l1 <= l2:
+                    elif op == "smallequal" and l1 <= l2:
                         self.visits(body, father)
                         break
-                    elif op == "NOTEQUAL" and l1 != l2:
+                    elif op == "notequal" and l1 != l2:
+                        self.visits(body, father)
+                        break
+                    elif op == "big" and l1 > l2:
                         self.visits(body, father)
                         break
                 else:
                     self.visits(node.bodys[-1], father)
             else:
                 raise Exception(len(node.l1s), len(node.bodys))
+
+    def expr_while(self, node: While, father: Root | Func):
+        temp = self.expr_args([node.expr1, node.op, node.expr2], father, False)
+        expr1 = temp[0]
+        op = temp[1]
+        expr2 = temp[2]
+
+        if op == "notequal":
+            while expr1 != expr2:
+                self.visits(node.body, father)
+                temp = self.expr_args([node.expr1, node.expr2], father)
+                expr1 = temp[0]
+                expr2 = temp[1]
+        elif op == "equal":
+            while expr1 == expr2:
+                self.visits(node.body, father)
+                temp = self.expr_args([node.expr1, node.expr2], father)
+                expr1 = temp[0]
+                expr2 = temp[1]
+        elif op == "small":
+            while expr1 < expr2:
+                self.visits(node.body, father)
+                temp = self.expr_args([node.expr1, node.expr2], father)
+                expr1 = temp[0]
+                expr2 = temp[1]
+        elif op == "smallequal":
+            while expr1 <= expr2:
+                self.visits(node.body, father)
+                temp = self.expr_args([node.expr1, node.expr2], father)
+                expr1 = temp[0]
+                expr2 = temp[1]
+
+        elif op == "bigequal":
+            while expr1 >= expr2:
+                self.visits(node.body, father)
+                temp = self.expr_args([node.expr1, node.expr2], father)
+                expr1 = temp[0]
+                expr2 = temp[1]
+
+        elif op == "big":
+            while expr1 > expr2:
+                self.visits(node.body, father)
+                temp = self.expr_args([node.expr1, node.expr2], father)
+                expr1 = temp[0]
+                expr2 = temp[1]
 
     def call(self, node: Call, father: Root | Func):
         if node.name in father.command:
@@ -193,7 +247,6 @@ class Runner:
             return
 
         args_dict = {}
-
         for name, data in zip(func_obj.args, args_list):
             args_dict[name] = data
         func_obj.var_ctx = args_dict.copy()  # 参数
@@ -209,6 +262,7 @@ class Runner:
             # item里是AST
             val = self.visit(item, father)
             if val:
+                print("Return", val)
                 return val
 
     def try_pop(self, father: Root | Func):

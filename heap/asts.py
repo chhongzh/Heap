@@ -120,3 +120,11 @@ class Command:
 class DotExpr:
     def __init__(self, father, child: list[str]):
         pass
+
+
+class While:
+    def __init__(self, expr1, op, expr2, body: list):
+        self.expr1 = expr1
+        self.op = op
+        self.expr2 = expr2
+        self.body = body
