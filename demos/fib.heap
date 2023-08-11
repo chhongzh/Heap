@@ -32,4 +32,4 @@ func fib n:                 # 定义函数n
     print;
 endfunc
 
-fib 100000;                   # 调用
+fib 1000;                   # 调用
