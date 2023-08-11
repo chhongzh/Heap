@@ -25,4 +25,6 @@ KEYWORDS = [
     "endcommand",
     "pop",
     "input",
+    "while",
+    "endwhile",
 ]

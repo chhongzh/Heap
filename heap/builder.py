@@ -20,6 +20,7 @@ from .asts import (
     Pop,
     Input,
     Try,
+    While,
 )
 from .types import OBJ, SEM, VARDEF, KEYWORD, REPLACE, ID, COLON
 from .keywords import KEYWORDS
@@ -101,7 +102,10 @@ class Builder:
                 t = self.match_return()
 
                 return t
+            elif self.tok.value == "while":
+                return self.match_while()
             elif self.tok.value == "if":
+                print(self.tok.value)
                 return self.match_if()
             elif self.tok.value == "include":
                 return self.match_include()
@@ -126,7 +130,7 @@ class Builder:
         l2s = []
         bodys = []
 
-        while self.tok.value != "ENDIF":
+        while self.tok.value != "endif":
             l1, op, l2, body = self.if_const()
             if None not in (l1, op, l2):
                 l1s.append(l1)
@@ -141,11 +145,11 @@ class Builder:
     def if_const(self):
         body = []
 
-        if self.tok.value == "ELSE":
+        if self.tok.value == "else":
             self.advance()  # skip ELSE
             self.advance()  # skip ;
 
-            while self.tok.value not in ("ENDIF", "ELSE", "ELIF"):
+            while self.tok.value not in ("endif", "else", "elif"):
                 body.append(self.expr())
 
             return None, None, None, body
@@ -159,7 +163,7 @@ class Builder:
 
         self.advance()  # skip SEM
 
-        while self.tok.value not in ("ENDIF", "ELSE", "ELIF"):
+        while self.tok.value not in ("endif", "else", "elif"):
             body.append(self.expr())
 
         return l1, op, l2, body
@@ -198,6 +202,27 @@ class Builder:
         val = self.tok.value
         self.advance()
         return Push(val)
+
+    def match_while(self):
+        self.advance()  # skip while
+        expr1 = Replace if self.tok.type == REPLACE else self.tok.value
+
+        self.advance()
+        op = Replace if self.tok.type == REPLACE else self.tok.value
+
+        self.advance()
+        expr2 = Replace if self.tok.type == REPLACE else self.tok.value
+
+        self.advance()  # skip expr2
+        self.advance()  # skip :
+
+        body = []
+        while self.tok.value != "endwhile":
+            body.append(self.expr())
+
+        self.advance()  # endwhile
+
+        return While(expr1, op, expr2, body)
 
     def match_get(self):
         self.advance()  # skip GET
