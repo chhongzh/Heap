@@ -1,3 +1,7 @@
+# Heap lang demos
+# chhongzh @ 2023.8.7
+
+
 func fib n:                 # 定义函数n
     set a 0;                # 设置临时变量a
     set b 1;                # 设置临时变量b
