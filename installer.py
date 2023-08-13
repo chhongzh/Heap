@@ -3,7 +3,6 @@ import sys
 import os
 import uuid
 import zipfile
-import shutil
 
 
 def ask(prompt: str, value=True):
@@ -70,6 +69,7 @@ try:
     req = requests.get("https://api.github.com/repos/chhongzh/heap/releases", timeout=3)
 except TimeoutError:
     print("尝试请求Github时出现错误, Github不可用.")
+    print("尝试使用gitee手动下载")
     prompt_toolkit.shortcuts.message_dialog(
         "错误", "尝试获取版本信息时, 遇到了TimeoutError. 无法获得版本数据."
     )
