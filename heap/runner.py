@@ -28,6 +28,7 @@ from .loader import loader
 from . import Lexer, Builder
 from .stdlibs import LIBS
 from importlib import import_module
+import sys
 
 
 class Runner:
@@ -36,6 +37,10 @@ class Runner:
         self.include_path = [path]
 
     def run(self):
+        # 魔法变量:
+        self.root.var_ctx["__heap_excutable"] = sys.executable
+        self.root.var_ctx["__heap_argv"] = sys.argv[1:]
+
         self.visits(self.root.body, self.root)
 
     def visit(self, node, father: Root | Func):
