@@ -114,16 +114,12 @@ class Runner:
             return
 
         content = loader(path)
-        print(content)
         lexer = Lexer(content)
         toks = lexer.lex()
-        print(toks)
 
         builder = Builder(toks)
         ast = builder.parase()
-        print(ast.body)
         self.visits(ast.body, father)
-        print(father.var_ctx)
 
         self.include_path.pop()
 
