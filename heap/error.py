@@ -29,6 +29,10 @@ class IncludeError(Error):
     pass
 
 
+class NotDefine(Error):
+    pass
+
+
 ERRDICT = {
     "BaseError": BaseError,
     "Error": Error,
@@ -37,4 +41,5 @@ ERRDICT = {
     "NotCloseTag": NotCloseTag,
     "HeapOverflow": HeapOverflow,
     "IncludeError": IncludeError,
+    "NotDefine": NotDefine,
 }

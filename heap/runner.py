@@ -26,9 +26,10 @@ from inspect import isfunction
 from . import hook
 from .loader import loader
 from . import Lexer, Builder
-from .stdlibs import LIBS
+from .stdlibs import HEAP_LIBS, LIBS
 from importlib import import_module
 import sys
+from os.path import split
 
 
 class Runner:
@@ -94,6 +95,16 @@ class Runner:
                 ):
                     father.fn_ctx[name] = md.__dict__[name]
             return
+        elif path in HEAP_LIBS:
+            content = loader(join(split(__file__)[0], "lib", HEAP_LIBS[path]))
+            lexer = Lexer(content)
+            toks = lexer.lex()
+
+            builder = Builder(toks)
+            ast = builder.parase()
+            self.visits(ast.body, father)
+
+            return
 
         path = join(self.include_path[-1], path)
         self.include_path.append(dirname(path))
@@ -103,12 +114,16 @@ class Runner:
             return
 
         content = loader(path)
+        print(content)
         lexer = Lexer(content)
         toks = lexer.lex()
+        print(toks)
 
         builder = Builder(toks)
         ast = builder.parase()
+        print(ast.body)
         self.visits(ast.body, father)
+        print(father.var_ctx)
 
         self.include_path.pop()
 
@@ -245,6 +260,10 @@ class Runner:
         args_list = self.expr_args(node.args, father)
 
         # 查找函数对象
+        if node.name not in father.fn_ctx:
+            hook._raise_error(NotDefine(node.name, -1))
+            return
+
         func_obj = father.fn_ctx[node.name]
 
         if not isinstance(func_obj, Func):

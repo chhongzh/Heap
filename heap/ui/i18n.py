@@ -1,7 +1,7 @@
 """
 Heap Lang - i18n
 
-面对国际化
+国际语言库
 """
 
 import json
