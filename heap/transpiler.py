@@ -26,7 +26,7 @@ from .asts import (
 from .loader import loader
 
 
-class Compiler:
+class Transpiler:
     def __init__(
         self,
         code: Root,

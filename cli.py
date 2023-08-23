@@ -28,11 +28,11 @@ def run(filepath):
 @__wrapper.command()
 @click.argument("input_filepath", type=click.Path(exists=True))
 @click.argument("output_filepath", type=click.Path(exists=False))
-def compile(input_filepath, output_filepath):
+def transpile(input_filepath, output_filepath):
     from heap.loader import loader
     from os import getcwd, chdir
     from os.path import dirname
-    from heap import Compiler, Lexer, Builder
+    from heap import Transpiler, Lexer, Builder
 
     old_dir = getcwd()
 
@@ -45,7 +45,7 @@ def compile(input_filepath, output_filepath):
     b = Builder(toks)
     tree = b.parase()
 
-    c = Compiler(tree)
+    c = Transpiler(tree)
     fcontent = c.compile()
 
     chdir(old_dir)
