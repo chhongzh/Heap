@@ -15,6 +15,9 @@ class Root:
         self.body: list
         self.body.append(tok)
 
+    def __repr__(self):
+        return f"Root({self.body.__repr__()})"
+
 
 class Try:
     def __init__(self, t1: list, catch: list, t2: list):
@@ -37,54 +40,76 @@ class Func:
         self.body: list
         self.body.append(tok)
 
+    def __repr__(self):
+        return f"Func({self.name.__repr__()},{self.args.__repr__()},{self.body.__repr__()})"
+
 
 class Set:
     def __init__(self, name, val):
         self.name = name
         self.val = val
 
+    def __repr__(self):
+        return f"Set({self.name.__repr__()},{self.val.__repr__()})"
+
 
 class Get:
     def __init__(self, name):
         self.name = name
 
+    def __repr__(self):
+        return f"Get({self.name.__repr__()})"
+
 
 class Add:
-    pass
+    def __repr__(self):
+        return f"Add()"
 
 
 class Sub:
-    pass
+    def __repr__(self):
+        return f"Sub()"
 
 
 class Div:
-    pass
+    def __repr__(self):
+        return f"Div()"
 
 
 class Mul:
-    pass
+    def __repr__(self):
+        return f"Mul()"
 
 
 class Print:
-    pass
+    def __repr__(self):
+        return f"Print()"
 
 
 class Push:
     def __init__(self, val):
         self.val = val
 
+    def __repr__(self):
+        return f"Push({self.val.__repr__()})"
+
 
 class Replace:
-    pass
+    def __repr__(self):
+        return f"Replace()"
 
 
 class Pop:
-    pass
+    def __repr__(self):
+        return f"Pop()"
 
 
 class Input:
     def __init__(self, val: str):
         self.val = val
+
+    def __repr__(self):
+        return f"Input({self.val.__repr__()})"
 
 
 class Call:
@@ -92,15 +117,24 @@ class Call:
         self.name = name
         self.args = args
 
+    def __repr__(self):
+        return f"Call({self.name.__repr__()},{self.args.__repr__()})"
+
 
 class Return:
     def __init__(self, vals: list):
         self.vals = vals
 
+    def __repr__(self):
+        return f"Return({self.vals.__repr__()})"
+
 
 class Include:
     def __init__(self, path: str):
         self.path = path
+
+    def __repr__(self):
+        return f"Include({self.path.__repr__()})"
 
 
 class If:
@@ -110,11 +144,17 @@ class If:
         self.l2s = l2s
         self.bodys = bodys
 
+    def __repr__(self):
+        return f"If({self.l1s.__repr__()},{self.ops.__repr__()},{self.l2s.__repr__()},{self.bodys.__repr__()})"
+
 
 class Command:
     def __init__(self, name: str, body: list):
         self.body = body
         self.name = name
+
+    def __repr__(self):
+        return f"Command({self.name.__repr__()},{self.body.__repr__()})"
 
 
 class DotExpr:
@@ -128,3 +168,6 @@ class While:
         self.op = op
         self.expr2 = expr2
         self.body = body
+
+    def __repr__(self):
+        return f"If({self.expr1.__repr__()},{self.op.__repr__()},{self.expr2.__repr__()},{self.body.__repr__()})"
