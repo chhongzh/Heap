@@ -1,3 +1,5 @@
+# Chhongzh 2023
+# Heap Lang
 from os import getcwd
 from .error import *
 from .asts import (
@@ -38,6 +40,8 @@ class Runner:
         self.include_path = [path]
 
     def run(self):
+        """运行"""
+
         # 魔法变量:
         self.root.var_ctx["__heap_excutable"] = sys.executable
         self.root.var_ctx["__heap_argv"] = sys.argv[1:]
@@ -45,6 +49,7 @@ class Runner:
         self.visits(self.root.body, self.root)
 
     def visit(self, node, father: Root | Func):
+        """解析一个Node"""
         if isinstance(node, Func):
             father.fn_ctx[node.name] = node
         elif isinstance(node, Input):
@@ -85,7 +90,8 @@ class Runner:
             self.load_module(node.path, father)
 
     def load_module(self, path: str, father: Func | Root):
-        if path in LIBS:
+        """加载一个模块"""
+        if path in LIBS:  # 对于是Python文件的模块
             md = import_module(f".lib.{LIBS[path]}", "heap")
             for name in md.__dir__():
                 if (
@@ -95,7 +101,7 @@ class Runner:
                 ):
                     father.fn_ctx[name] = md.__dict__[name]
             return
-        elif path in HEAP_LIBS:
+        elif path in HEAP_LIBS:  # 对于是Heap文件的模块
             content = loader(join(split(__file__)[0], "lib", HEAP_LIBS[path]))
             lexer = Lexer(content)
             toks = lexer.lex()
@@ -107,7 +113,7 @@ class Runner:
             return
 
         path = join(self.include_path[-1], path)
-        self.include_path.append(dirname(path))
+        self.include_path.append(dirname(path))  # 将解析目录加入到栈
 
         if not exists(path):
             hook._raise_error(IncludeError(path, -1, "Not a file."))
@@ -121,9 +127,11 @@ class Runner:
         ast = builder.parase()
         self.visits(ast.body, father)
 
-        self.include_path.pop()
+        self.include_path.pop()  # 弹出
 
     def expr_args(self, args: list, father: Func | Root, delete=True):
+        """解析函数参数"""
+
         replace_count = args.count(Replace)
         replace_args = father.stack[len(father.stack) - replace_count :]
         idx = 0
@@ -246,7 +254,7 @@ class Runner:
                 expr2 = temp[1]
 
     def call(self, node: Call, father: Root | Func):
-        if node.name in father.command:
+        if node.name in father.command:  # 指令不能有参数
             if node.args:
                 raise Exception
 
@@ -263,10 +271,10 @@ class Runner:
         func_obj = father.fn_ctx[node.name]
 
         if not isinstance(func_obj, Func):
-            func_obj(father, *args_list)
+            func_obj(father, *args_list)  # 如果是Python Function
             return
 
-        args_dict = {}
+        args_dict = {}  # 解析数据
         for name, data in zip(func_obj.args, args_list):
             args_dict[name] = data
         func_obj.var_ctx = args_dict.copy()  # 参数
@@ -278,11 +286,11 @@ class Runner:
             father.stack += value
 
     def visits(self, items: list, father: Func | Root):
+        """递归遍历所有nodes"""
         for item in items:
             # item里是AST
             val = self.visit(item, father)
-            if val:
-                print("Return", val)
+            if val:  # 处理返回值
                 return val
 
     def try_pop(self, father: Root | Func):
