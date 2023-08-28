@@ -43,7 +43,7 @@ class Builder:
         else:
             self.tok = self.toks[self.pos]
 
-    def parase(self):
+    def parse(self):
         self.advance()
         while self.tok:
             self.root.append(self.expr())

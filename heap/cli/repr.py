@@ -91,7 +91,7 @@ def repr() -> None:
         toks = l.lex()
 
         b = Builder(toks)
-        ast_tree = b.parase()
+        ast_tree = b.parse()
 
         ast_tree.stack = stack  # 上下文
         ast_tree.fn_ctx = fn_ctx  # 上下文

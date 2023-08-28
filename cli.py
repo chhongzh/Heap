@@ -19,7 +19,7 @@ def run(filepath):
     toks = l.lex()
 
     b = Builder(toks)
-    root = b.parase()
+    root = b.parse()
 
     r = Runner(root, dirname(filepath))
     r.run()
@@ -43,7 +43,7 @@ def transpile(input_filepath, output_filepath):
     toks = l.lex()
 
     b = Builder(toks)
-    tree = b.parase()
+    tree = b.parse()
 
     c = Transpiler(tree)
     fcontent = c.compile()

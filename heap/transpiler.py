@@ -106,7 +106,7 @@ class Transpiler:
         l = Lexer(loader(path))
         tok = l.lex()
         b = Builder(tok)
-        asts = b.parase()
+        asts = b.parse()
 
         self.append_comment(f"Include File {path}")
         self.compile_lot(asts.body)

@@ -107,7 +107,7 @@ class Runner:
             toks = lexer.lex()
 
             builder = Builder(toks)
-            ast = builder.parase()
+            ast = builder.parse()
             self.visits(ast.body, father)
 
             return
@@ -124,7 +124,7 @@ class Runner:
         toks = lexer.lex()
 
         builder = Builder(toks)
-        ast = builder.parase()
+        ast = builder.parse()
         self.visits(ast.body, father)
 
         self.include_path.pop()  # 弹出
