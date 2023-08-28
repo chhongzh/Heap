@@ -51,72 +51,73 @@ class Builder:
 
     def expr(self):
         if self.tok.type == KEYWORD:
-            if self.tok.value == "func":
-                t = self.match_fn()
-                return t
-            elif self.tok.value == "div":
-                self.advance()
-                self.advance()
+            match self.tok.value:
+                case "func":
+                    t = self.match_fn()
+                    return t
+                case "div":
+                    self.advance()
+                    self.advance()
 
-                return Div()
-            elif self.tok.value == "mul":
-                self.advance()
-                self.advance()
+                    return Div()
+                case "mul":
+                    self.advance()
+                    self.advance()
 
-                return Mul()
-            elif self.tok.value == "set":
-                t = self.match_set()
-                self.advance()  # SEM
-                return t
-            elif self.tok.value == "get":
-                t = self.match_get()
-                self.advance()
-                return t
-            elif self.tok.value == "push":
-                t = self.match_push()
-                self.advance()  # SEM
+                    return Mul()
+                case "set":
+                    t = self.match_set()
+                    self.advance()  # SEM
+                    return t
+                case "get":
+                    t = self.match_get()
+                    self.advance()
+                    return t
+                case "push":
+                    t = self.match_push()
+                    self.advance()  # SEM
 
-                return t
-            elif self.tok.value == "print":
-                self.advance()  # PRINT
-                self.advance()  # SEM
+                    return t
+                case "print":
+                    self.advance()  # PRINT
+                    self.advance()  # SEM
 
-                return Print()
-            elif self.tok.value == "add":
-                self.advance()  # ADD
-                self.advance()  # SEM
+                    return Print()
+                case "add":
+                    self.advance()  # ADD
+                    self.advance()  # SEM
 
-                return Add()
-            elif self.tok.value == "pop":
-                self.advance()  # pop
-                self.advance()  # SEM
+                    return Add()
+                case "pop":
+                    self.advance()  # pop
+                    self.advance()  # SEM
 
-                return Pop()
-            elif self.tok.value == "sub":
-                self.advance()  # SUB
-                self.advance()  # SEM
+                    return Pop()
+                case "sub":
+                    self.advance()  # SUB
+                    self.advance()  # SEM
 
-                return Sub()
-            elif self.tok.value == "return":
-                self.advance()  # RETURN
-                t = self.match_return()
+                    return Sub()
+                case "return":
+                    self.advance()  # RETURN
+                    t = self.match_return()
 
-                return t
-            elif self.tok.value == "while":
-                return self.match_while()
-            elif self.tok.value == "if":
-                print(self.tok.value)
-                return self.match_if()
-            elif self.tok.value == "include":
-                return self.match_include()
-            elif self.tok.value == "command":
-                return self.match_command()
-            elif self.tok.value == "input":
-                self.advance()  # Input
-                title = Replace if self.tok.type == REPLACE else self.tok.value
-                self.advance()  # title
-                self.advance()  # sem
-                return Input(title)
+                    return t
+                case "while":
+                    return self.match_while()
+                case "if":
+                    print(self.tok.value)
+                    return self.match_if()
+                case "include":
+                    return self.match_include()
+                case "command":
+                    return self.match_command()
+                case "input":
+                    self.advance()  # Input
+                    title = Replace if self.tok.type == REPLACE else self.tok.value
+                    self.advance()  # title
+                    self.advance()  # sem
+                    return Input(title)
         elif self.tok.type == ID:
             return self.match_call()
 
