@@ -60,6 +60,8 @@ class Lexer:
                         cache.append("\n")
                     case "t":
                         cache.append("\t")
+                    case '"':
+                        cache.append('"')
                     case _:
                         raise Exception
                 self.advance()
