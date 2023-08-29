@@ -49,15 +49,6 @@ def repr() -> None:
         }
     )
 
-    def bottom_tool_bar():
-        if session.default_buffer.document.text == "exit":
-            return t("解释器.提示框.退出")
-        err, pos = syntax_check(session.default_buffer.document.text)
-        if err:
-            return t(f"解释器.错误消息.{err}")
-        else:
-            return t("解释器.提示框.信息")
-
     def rprompt():
         return f"{ln}"
 
@@ -67,7 +58,6 @@ def repr() -> None:
         try:
             code = session.prompt(
                 "< ",
-                bottom_toolbar=bottom_tool_bar,
                 rprompt=rprompt,
                 style=style,
                 mouse_support=True,
