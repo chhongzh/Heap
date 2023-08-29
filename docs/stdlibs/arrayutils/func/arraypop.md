@@ -4,7 +4,7 @@
 
 ## 用法
 
-`arraypop <list>;`
+```arraypop <list>;```
 
 ## 返回值
 

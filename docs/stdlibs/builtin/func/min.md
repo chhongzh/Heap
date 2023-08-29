@@ -4,7 +4,7 @@
 
 ## 用法
 
-`min <int | float> <int | float>;`
+```min <int | float> <int | float>;```
 
 ## 返回值
 
