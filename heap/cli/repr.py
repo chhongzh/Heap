@@ -2,6 +2,14 @@
 # chhongzh @ 2023.8.23
 # 马上就要开学喽!
 
+PRINT_BUFFER = []
+
+
+def _print(value):
+    global PRINT_BUFFER
+    PRINT_BUFFER.append(value)
+    print(value, end="")
+
 
 def repr() -> None:
     from heap.ui.i18n import i18n
@@ -36,6 +44,7 @@ def repr() -> None:
     ln = 1  # 当前行数
 
     hook._raise_error = print_error
+    hook._print = _print
 
     # 上下文数据
     stack = []
@@ -90,6 +99,12 @@ def repr() -> None:
 
         r = Runner(ast_tree, old)
         r.run()
+
+        # 自动换行:
+        if len(PRINT_BUFFER) > 0 and PRINT_BUFFER[-1][-1] != "\n":
+            print("")
+
+        del PRINT_BUFFER[:]  # 释放
 
         print(">", ast_tree.stack)  # 输出
 
