@@ -1,0 +1,48 @@
+# Heap Lang 基础库计划 - builtin
+# Chhongzh @ 2023
+
+
+func min a b:
+    # min <int | float> <int | float> -> <int | float>
+
+    get a;
+    get b;
+
+    set result None; # 返回的结果
+
+    if $ small $:
+        get a; 
+        set result $;
+    else:
+        get b;
+        set result $;
+    endif 
+
+    get result;
+
+    return $;
+
+endfunc
+
+
+func max a b:
+    # man <int | float> <int | float> -> <int | float>
+
+    get a;
+    get b;
+
+    set result None; # 返回的结果
+
+    if $ big $:
+        get a; 
+        set result $;
+    else:
+        get b;
+        set result $;
+    endif 
+
+    get result;
+
+    return $;
+
+endfunc

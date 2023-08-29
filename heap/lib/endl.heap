@@ -1,0 +1,4 @@
+func endl:
+    push "\n";
+    print;
+endfunc
