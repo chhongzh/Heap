@@ -106,7 +106,6 @@ class Builder:
                 case "while":
                     return self.match_while()
                 case "if":
-                    print(self.tok.value)
                     return self.match_if()
                 case "include":
                     return self.match_include()
