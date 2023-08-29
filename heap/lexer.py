@@ -27,7 +27,7 @@ class Lexer:
                 self.advance()
             elif self.current == "[":
                 self.tok.append(Token(OBJ, self.expr_list()))
-                continue
+
             elif self.current == "#":
                 self.advance()
                 self.comment_match()
@@ -53,10 +53,21 @@ class Lexer:
     def string_match(self):
         cache = []
         while self.current and self.current != '"':
+            if self.current == "\\":
+                self.advance()
+                match self.current:
+                    case "n":
+                        cache.append("\n")
+                    case "t":
+                        cache.append("\t")
+                    case _:
+                        raise Exception
+                self.advance()
+                continue
             cache.append(self.current)
             self.advance()
         self.advance()
-        return "".join(cache).replace("\\n", "\n").replace("\\t", "\t")
+        return "".join(cache)
 
     def is_num(self):
         self.current: str | None
