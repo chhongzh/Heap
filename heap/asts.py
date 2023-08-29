@@ -170,4 +170,4 @@ class While:
         self.body = body
 
     def __repr__(self):
-        return f"If({self.expr1.__repr__()},{self.op.__repr__()},{self.expr2.__repr__()},{self.body.__repr__()})"
+        return f"While({self.expr1.__repr__()},{self.op.__repr__()},{self.expr2.__repr__()},{self.body.__repr__()})"
