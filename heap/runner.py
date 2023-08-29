@@ -39,6 +39,8 @@ class Runner:
         self.root = root
         self.include_path = [path]
 
+        self.load_module("builtin", self.root)  # 注入内建库
+
     def run(self):
         """运行"""
 
