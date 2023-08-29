@@ -43,8 +43,8 @@ class Runner:
         """运行"""
 
         # 魔法变量:
-        self.root.var_ctx["__heap_excutable"] = sys.executable
-        self.root.var_ctx["__heap_argv"] = sys.argv[1:]
+        self.root.var_ctx["heap_excutable"] = sys.executable
+        self.root.var_ctx["heap_argv"] = sys.argv[3:]
 
         self.visits(self.root.body, self.root)
 
