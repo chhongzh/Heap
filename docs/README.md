@@ -3,7 +3,7 @@
 ## 目录
 > [什么是Heap](What_Is_Heap.md)
 >
-> [语法](grammar/_.md)
+> [语法](grammar/index.md)
 > 
 > > [\$](grammar/replace.md)
 > >
@@ -13,10 +13,10 @@
 > > 
 > > [While](grammar/while.md)
 >
-> [定义](define/_.md)
+> [定义](define/index.md)
 > > [切确的值](define/value.md)
 >
-> [StdLibs](stdlibs/_.md)
-> > [Builtin](stdlibs/builtin/_.md)
+> [StdLibs](stdlibs/index.md)
+> > [Builtin](stdlibs/builtin/index.md)
 > >
-> > [Arrayutils](stdlibs/arrayutils/_.md)
+> > [Arrayutils](stdlibs/arrayutils/index.md)

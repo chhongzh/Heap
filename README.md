@@ -48,3 +48,8 @@ Hello world
 
 ## Install
 安装Python环境后, 执行`python3 -c "$(curl -fsSL https://raw.githubusercontent.com/chhongzh/Heap/main/installer.py)"`. 安装脚本会自动完成安装.
+
+## Docs
+[On this Repo](docs/README.md)
+
+[On github.io](https://chhongzh.github.io#/docs/README)

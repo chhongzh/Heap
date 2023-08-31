@@ -20,4 +20,4 @@ while 1 equal 1:
 endwhile
 ```
 
-[返回上级](_.md)
+[返回上级](index.md)
