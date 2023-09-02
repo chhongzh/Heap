@@ -27,3 +27,19 @@ def cos(father: Root | Func, val):
 
 def pow(father: Root | Func, val, val1):
     father.stack.append(math.pow(val, val1))
+
+
+def ceil(father: Root | Func, val):
+    father.stack.append(math.ceil(val))
+
+
+def floor(father: Root | Func, val):
+    father.stack.append(math.floor(val))
+
+
+def fabs(father: Root | Func, val):
+    father.stack.append(math.fabs(val))
+
+
+def gcd(father: Root | Func, val, val1):
+    father.stack.append(math.gcd(val, val1))
