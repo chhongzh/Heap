@@ -32,8 +32,6 @@ def repr() -> None:
 
     from heap.error import InputError
 
-    from heap.checker import syntax_check, MESSAGE
-
     i = i18n(f"../lang/{getlocale()[0]}.json", "../lang/zh_CN.json")  # 加载语言
 
     t = i.t
