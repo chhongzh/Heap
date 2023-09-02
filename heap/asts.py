@@ -16,7 +16,7 @@ class Root:
         self.body.append(tok)
 
     def __repr__(self):
-        return f"Root({self.body.__repr__()})"
+        return f"Root({repr(self.body)})"
 
 
 class Try:
@@ -41,7 +41,7 @@ class Func:
         self.body.append(tok)
 
     def __repr__(self):
-        return f"Func({self.name.__repr__()},{self.args.__repr__()},{self.body.__repr__()})"
+        return f"Func({repr(self.name)},{repr(self.args)},{repr(self.body)})"
 
 
 class Set:
@@ -50,7 +50,7 @@ class Set:
         self.val = val
 
     def __repr__(self):
-        return f"Set({self.name.__repr__()},{self.val.__repr__()})"
+        return f"Set({repr(self.name)},{repr(self.val)})"
 
 
 class Get:
@@ -58,7 +58,7 @@ class Get:
         self.name = name
 
     def __repr__(self):
-        return f"Get({self.name.__repr__()})"
+        return f"Get({repr(self.name)})"
 
 
 class Add:
@@ -91,7 +91,7 @@ class Push:
         self.val = val
 
     def __repr__(self):
-        return f"Push({self.val.__repr__()})"
+        return f"Push({repr(self.val)})"
 
 
 class Replace:
@@ -109,7 +109,7 @@ class Input:
         self.val = val
 
     def __repr__(self):
-        return f"Input({self.val.__repr__()})"
+        return f"Input({repr(self.val)})"
 
 
 class Call:
@@ -118,7 +118,7 @@ class Call:
         self.args = args
 
     def __repr__(self):
-        return f"Call({self.name.__repr__()},{self.args.__repr__()})"
+        return f"Call({repr(self.name)},{repr(self.args)})"
 
 
 class Return:
@@ -126,7 +126,7 @@ class Return:
         self.vals = vals
 
     def __repr__(self):
-        return f"Return({self.vals.__repr__()})"
+        return f"Return({repr(self.vals)})"
 
 
 class Include:
@@ -134,7 +134,7 @@ class Include:
         self.path = path
 
     def __repr__(self):
-        return f"Include({self.path.__repr__()})"
+        return f"Include({repr(self.path)})"
 
 
 class If:
@@ -145,7 +145,9 @@ class If:
         self.bodys = bodys
 
     def __repr__(self):
-        return f"If({self.l1s.__repr__()},{self.ops.__repr__()},{self.l2s.__repr__()},{self.bodys.__repr__()})"
+        return (
+            f"If({repr(self.l1s)},{repr(self.ops)},{repr(self.l2s)},{repr(self.bodys)})"
+        )
 
 
 class Command:
@@ -154,7 +156,7 @@ class Command:
         self.name = name
 
     def __repr__(self):
-        return f"Command({self.name.__repr__()},{self.body.__repr__()})"
+        return f"Command({repr(self.name)},{repr(self.body)})"
 
 
 class DotExpr:
@@ -170,4 +172,4 @@ class While:
         self.body = body
 
     def __repr__(self):
-        return f"While({self.expr1.__repr__()},{self.op.__repr__()},{self.expr2.__repr__()},{self.body.__repr__()})"
+        return f"While({repr(self.expr1)},{repr(self.op)},{repr(self.expr2)},{repr(self.body)})"
