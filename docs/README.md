@@ -20,5 +20,7 @@
 > > [Builtin](stdlibs/builtin/index.md)
 > >
 > > [Arrayutils](stdlibs/arrayutils/index.md)
+> > 
+> > [Random](stdlibs/random/index.md)
 >
 > [包管理器](heapack/index.md)
