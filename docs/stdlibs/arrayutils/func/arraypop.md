@@ -1,4 +1,4 @@
-# arraypop
+# Arraypop
 
 删除一个数组栈顶元素
 
