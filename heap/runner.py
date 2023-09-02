@@ -41,6 +41,8 @@ class Runner:
 
         self.load_module("builtin", self.root)  # 注入内建库
 
+        self.root.runner = self  # 注入自己
+
     def run(self):
         """运行"""
 
