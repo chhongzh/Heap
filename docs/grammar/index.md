@@ -8,6 +8,8 @@
 > [If](if.md)
 > 
 > [While](while.md)
+> 
+> [Func](func.md)
 
 
 [返回上级](../README.md)
