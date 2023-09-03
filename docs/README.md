@@ -12,6 +12,8 @@
 > > [If](grammar/if.md)
 > > 
 > > [While](grammar/while.md)
+> > 
+> > [Func](grammar/func.md)
 >
 > [定义](define/index.md)
 > > [切确的值](define/value.md)
