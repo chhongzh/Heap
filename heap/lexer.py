@@ -2,6 +2,8 @@ from .ops import OPS
 from .token import Token
 from .types import OBJ, ID, KEYWORD
 from .keywords import KEYWORDS
+from . import hook
+from .error import LexerError
 
 
 class Lexer:
@@ -63,7 +65,9 @@ class Lexer:
                     case '"':
                         cache.append('"')
                     case _:
-                        raise Exception
+                        hook._raise_error(
+                            LexerError(f"\\{self.current}", self.pos, "未知的转义")
+                        )
                 self.advance()
                 continue
             cache.append(self.current)
@@ -88,20 +92,20 @@ class Lexer:
         while self.current is not None and self.number_check():
             if self.current == "-":
                 if is_negtive:
-                    raise TypeError("Invalid negative.")
+                    hook._raise_error(LexerError("", self.pos, "Invalid negative."))
                 else:
                     is_negtive = True
                     cache.append("-")
             elif self.isdot():
                 if dot:
-                    raise TypeError("Invalid dot.")
+                    hook._raise_error(LexerError("", self.pos, "Invalid dot."))
                 else:
                     dot = True
                     cache.append(".")
             elif self.isnum():
                 cache.append(self.current)
             else:
-                raise TypeError("Invalid number.")
+                hook._raise_error(LexerError("", self.pos, "Invalid number."))
 
             self.advance()
         if "." in cache:
@@ -154,7 +158,7 @@ class Lexer:
             elif self.number_check():
                 cache.append(self.num_match())
             elif self.current.isalpha():
-                raise Exception
+                hook._raise_error(LexerError(self.current, self.pos, "列表不应该出现id"))
             else:
                 self.advance()
 

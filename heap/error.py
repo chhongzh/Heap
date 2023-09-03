@@ -9,6 +9,10 @@ class Error(BaseError):
     pass
 
 
+class LexerError(BaseError):
+    pass
+
+
 class ObjError(Error):
     pass
 
