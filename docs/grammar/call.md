@@ -1,5 +1,7 @@
 # Call 语法
 
+调用func或者是command.
+
 ```
 <Func | Command> <Arg> ... <Arg N> ;
 ```
