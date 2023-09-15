@@ -27,4 +27,6 @@ KEYWORDS = [
     "input",
     "while",
     "endwhile",
+    "iter",
+    "enditer",
 ]

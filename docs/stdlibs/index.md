@@ -7,5 +7,7 @@
 > [arrayutils](arrayutils/index.md)
 > 
 > [random](random/index.md)
+>
+> [math](math/index.md)
 
 [返回上级](../README.md)

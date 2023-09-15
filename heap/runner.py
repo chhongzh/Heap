@@ -22,6 +22,7 @@ from .asts import (
     Include,
     Command,
     While,
+    Iter,
 )
 from os.path import exists, dirname, join
 from inspect import isfunction
@@ -43,12 +44,12 @@ class Runner:
 
         self.root.runner = self  # 注入自己
 
-    def run(self):
-        """运行"""
-
         # 魔法变量:
         self.root.var_ctx["heap_excutable"] = sys.executable
         self.root.var_ctx["heap_argv"] = sys.argv[3:]
+
+    def run(self):
+        """运行"""
 
         self.visits(self.root.body, self.root)
 
@@ -92,6 +93,8 @@ class Runner:
             self.expr_if(node, father)
         elif isinstance(node, Include):
             self.load_module(node.path, father)
+        elif isinstance(node, Iter):
+            self.expr_iter(node, father)
 
     def load_module(self, path: str, father: Func | Root):
         """加载一个模块"""
@@ -302,3 +305,12 @@ class Runner:
             return father.stack.pop()
         except IndexError:
             return None
+
+    def expr_iter(self, node: Iter, father: Root | Func):
+        iter_name = node.iter_name
+
+        val = self.expr_args([node.val], father)[0]
+
+        for i in val:
+            father.var_ctx[iter_name] = i  # Bound the varibles
+            self.visits(node.body, father)  # 调用代码

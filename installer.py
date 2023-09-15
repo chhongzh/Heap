@@ -23,10 +23,11 @@ def install_module(name: str):
 
 print("安装Heap")
 
-if (3, 9, 6) > (sys.version_info.major, sys.version_info.minor, sys.version_info.micro):
+if (3, 10, 0) > (sys.version_info.major, sys.version_info.minor, sys.version_info.micro):
     print(
-        f"你的python版本太低了, 尝试升级. (需要Python3.9.6或更高, 而不是:Python{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro})"
+        f"你的python版本太低了, 尝试升级. (需要Python3.10.0或更高, 而不是:Python{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro})"
     )
+    exit(0)
 
 try:
     import rich, prompt_toolkit, requests

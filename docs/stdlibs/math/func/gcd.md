@@ -1,16 +1,16 @@
-# pow
+# gcd
 
-计算x的y次方
+返回两个数的最大公约数
 
 ## 用法
 
 ```
-pow <int | float> <int | float>;
+gcd <int | float> <int | float>;
 ```
 
 ## 返回值
 
-`<int | float>`
+`<int>`
 
 
 [返回上级](../index.md)

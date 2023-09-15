@@ -11,6 +11,7 @@
 - [ceil](func/ceil.md)
 - [floor](func/floor.md)
 - [fabs](func/fabs.md)
+- [gcd](func/gcd.md)
 
 ## Vars
 - 没有定义任何变量捏~

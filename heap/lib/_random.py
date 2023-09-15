@@ -5,5 +5,5 @@ import random
 from ..asts import Root, Func
 
 
-def radint(father: Root | Func, a: int, b: int):
-    return random.randint(a, b)
+def randint(father: Root | Func, a: int, b: int):
+    father.stack.append(random.randint(a, b))

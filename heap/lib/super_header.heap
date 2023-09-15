@@ -1,0 +1,11 @@
+# This file include all libs.
+# chhongzh 2023
+
+include "math";
+include "array";
+include "type";
+include "system";
+include "random";
+include "terminal";
+include "functionic";
+include "endl";

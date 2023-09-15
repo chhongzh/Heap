@@ -4,9 +4,11 @@ LIBS = {
     "type": "_type",
     "system": "_system",
     "random": "_random",
+    "terminal":"_terminal",
 }
 HEAP_LIBS = {
     "functionic": "functionic.heap",
     "endl": "endl.heap",
     "builtin": "builtin.heap",
+    "super_header":"super_header.heap",
 }

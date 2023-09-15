@@ -1,11 +1,11 @@
-# gcd
+# fabs
 
-返回两个数的最大公约数
+返回某个数的绝对值
 
 ## 用法
 
 ```
-abs <int | float>;
+fabs <int | float>;
 ```
 
 ## 返回值

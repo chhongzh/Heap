@@ -3,6 +3,7 @@ from .token import Token
 from .asts import (
     Command,
     Div,
+    Iter,
     Mul,
     Replace,
     Root,
@@ -117,6 +118,9 @@ class Builder:
                     self.advance()  # title
                     self.advance()  # sem
                     return Input(title)
+
+                case "iter":
+                    return self.match_iter()
         elif self.tok.type == ID:
             return self.match_call()
 
@@ -312,3 +316,25 @@ class Builder:
         if not self.tok:  # 保护
             self.catch_error()
             return True
+
+    def match_iter(self):
+        self.advance()  # skip keyword
+
+        iter_item = Replace if self.tok.type == REPLACE else self.tok.value
+        body = []
+
+        self.advance()  # skip list
+
+        iter_name = self.tok.value
+        self.advance()
+
+        self.advance()  # skip :
+
+        while not self.current_is_keyword("enditer"):
+            body.append(self.expr())
+
+        self.advance()
+        return Iter(iter_item, iter_name, body)
+
+    def current_is_keyword(self, keyword: str):
+        return self.tok.type == KEYWORD and self.tok.value == keyword

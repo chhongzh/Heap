@@ -1,4 +1,5 @@
 from .token import Token
+from typing import Any
 
 
 class Root:
@@ -8,6 +9,7 @@ class Root:
         self.fn_ctx = {}
         self.stack = []
         self.command = {}
+        self.runner: Any
 
         self.fn_ctx: dict[str, Func]
 
@@ -173,3 +175,13 @@ class While:
 
     def __repr__(self):
         return f"While({repr(self.expr1)},{repr(self.op)},{repr(self.expr2)},{repr(self.body)})"
+
+
+class Iter:
+    def __init__(self, val, iter_name, body: list):
+        self.val = val
+        self.iter_name = iter_name
+        self.body = body
+
+    def __repr__(self):
+        return f"Iter({repr(self.val)},{repr(self.iter_name)},{repr(self.body)})"

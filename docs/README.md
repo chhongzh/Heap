@@ -14,6 +14,8 @@
 > > [While](grammar/while.md)
 > > 
 > > [Func](grammar/func.md)
+> >
+> > [Iter](grammar/iter.md)
 >
 > [定义](define/index.md)
 > > [切确的值](define/value.md)

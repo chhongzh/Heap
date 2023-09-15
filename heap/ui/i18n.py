@@ -13,7 +13,7 @@ class i18n:
         p = file_path
         if not os.path.exists(file_path):
             p = default
-        with open(p) as f:
+        with open(p,encoding='utf-8') as f:
             self.d = json.load(f)
 
     def t(self, key: str):
