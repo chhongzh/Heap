@@ -23,19 +23,20 @@ def install_module(name: str):
 
 print("安装Heap")
 
-if (3, 10, 0) > (sys.version_info.major, sys.version_info.minor, sys.version_info.micro):
+if (3, 10, 0) > (
+    sys.version_info.major,
+    sys.version_info.minor,
+    sys.version_info.micro,
+):
     print(
         f"你的python版本太低了, 尝试升级. (需要Python3.10.0或更高, 而不是:Python{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro})"
     )
     exit(0)
 
 try:
-    import rich, prompt_toolkit, requests
+    import prompt_toolkit, requests
 except ImportError:
     print("缺少依赖, 补全.")
-    print("下载并安装rich")
-    install_module("rich")
-    print("安装成功")
     print("下载并安装prompt_toolkit")
     install_module("prompt_toolkit")
     print("安装成功")
@@ -46,7 +47,7 @@ except ImportError:
     install_module("click")
     print("安装成功")
 
-    import rich, prompt_toolkit, requests
+    import prompt_toolkit, requests
 
 
 path = os.getcwd()

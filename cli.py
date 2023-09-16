@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 import click
 
 
@@ -59,7 +59,7 @@ def transpile(input_filepath, output_filepath):
 
 @__wrapper.command()
 def repr():
-    from heap.cli import repr
+    from heap.repr import repr
 
     repr()
 
