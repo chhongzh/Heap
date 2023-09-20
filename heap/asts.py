@@ -1,8 +1,14 @@
 from .token import Token
 from typing import Any
+import abc
 
 
-class Root:
+class Node(abc.ABC):
+    def __repr__(self) -> str:
+        "返回字符串格式, 这个方法必须重载"
+
+
+class Root(Node):
     def __init__(self, body=[]):
         self.body = body
         self.var_ctx = {}
@@ -21,12 +27,12 @@ class Root:
         return f"Root({repr(self.body)})"
 
 
-class Try:
+class Try(Node):
     def __init__(self, t1: list, catch: list, t2: list):
         pass
 
 
-class Func:
+class Func(Node):
     def __init__(self, name: str, args: list[str], body=[]):
         self.args = args
         self.name = name
@@ -46,7 +52,7 @@ class Func:
         return f"Func({repr(self.name)},{repr(self.args)},{repr(self.body)})"
 
 
-class Set:
+class Set(Node):
     def __init__(self, name, val):
         self.name = name
         self.val = val
@@ -55,7 +61,7 @@ class Set:
         return f"Set({repr(self.name)},{repr(self.val)})"
 
 
-class Get:
+class Get(Node):
     def __init__(self, name):
         self.name = name
 
@@ -63,32 +69,32 @@ class Get:
         return f"Get({repr(self.name)})"
 
 
-class Add:
+class Add(Node):
     def __repr__(self):
         return f"Add()"
 
 
-class Sub:
+class Sub(Node):
     def __repr__(self):
         return f"Sub()"
 
 
-class Div:
+class Div(Node):
     def __repr__(self):
         return f"Div()"
 
 
-class Mul:
+class Mul(Node):
     def __repr__(self):
         return f"Mul()"
 
 
-class Print:
+class Print(Node):
     def __repr__(self):
         return f"Print()"
 
 
-class Push:
+class Push(Node):
     def __init__(self, val):
         self.val = val
 
@@ -96,17 +102,17 @@ class Push:
         return f"Push({repr(self.val)})"
 
 
-class Replace:
+class Replace(Node):
     def __repr__(self):
         return f"Replace()"
 
 
-class Pop:
+class Pop(Node):
     def __repr__(self):
         return f"Pop()"
 
 
-class Input:
+class Input(Node):
     def __init__(self, val: str):
         self.val = val
 
@@ -114,7 +120,7 @@ class Input:
         return f"Input({repr(self.val)})"
 
 
-class Call:
+class Call(Node):
     def __init__(self, name, args: list):
         self.name = name
         self.args = args
@@ -123,7 +129,7 @@ class Call:
         return f"Call({repr(self.name)},{repr(self.args)})"
 
 
-class Return:
+class Return(Node):
     def __init__(self, vals: list):
         self.vals = vals
 
@@ -131,7 +137,7 @@ class Return:
         return f"Return({repr(self.vals)})"
 
 
-class Include:
+class Include(Node):
     def __init__(self, path: str):
         self.path = path
 
@@ -139,7 +145,7 @@ class Include:
         return f"Include({repr(self.path)})"
 
 
-class If:
+class If(Node):
     def __init__(self, l1s: list, ops: list, l2s: list, bodys: list) -> None:
         self.l1s = l1s
         self.ops = ops
@@ -152,7 +158,7 @@ class If:
         )
 
 
-class Command:
+class Command(Node):
     def __init__(self, name: str, body: list):
         self.body = body
         self.name = name
@@ -161,12 +167,15 @@ class Command:
         return f"Command({repr(self.name)},{repr(self.body)})"
 
 
-class DotExpr:
+class DotExpr(Node):
     def __init__(self, father, child: list[str]):
         pass
 
+    def __repr__(self) -> str:
+        return "You Can't do this."
 
-class While:
+
+class While(Node):
     def __init__(self, expr1, op, expr2, body: list):
         self.expr1 = expr1
         self.op = op
@@ -177,7 +186,7 @@ class While:
         return f"While({repr(self.expr1)},{repr(self.op)},{repr(self.expr2)},{repr(self.body)})"
 
 
-class Iter:
+class Iter(Node):
     def __init__(self, val, iter_name, body: list):
         self.val = val
         self.iter_name = iter_name
