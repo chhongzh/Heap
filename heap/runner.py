@@ -169,22 +169,22 @@ class Runner:
 
                     if op == "equal" and l1 == l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "bigequal" and l1 >= l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "small" and l1 < l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "big" and l1 > l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "smallequal" and l1 <= l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "notequal" and l1 != l2:
                         self.visits(body, father)
-                        break
+                        return
                 else:
                     self.visits(node.bodys[-1], father)
 
@@ -194,22 +194,24 @@ class Runner:
 
                     if op == "equal" and l1 == l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "bigequal" and l1 >= l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "small" and l1 < l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "smallequal" and l1 <= l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "notequal" and l1 != l2:
                         self.visits(body, father)
-                        break
+                        return
                     elif op == "big" and l1 > l2:
                         self.visits(body, father)
-                        break
+                        return
+                    else:
+                        return
                 else:
                     self.visits(node.bodys[-1], father)
             else:
