@@ -29,35 +29,6 @@ def run(filepath, args):
 
 
 @__wrapper.command()
-@click.argument("input_filepath", type=click.Path(exists=True))
-@click.argument("output_filepath", type=click.Path(exists=False))
-def transpile(input_filepath, output_filepath):
-    from heap.loader import loader
-    from os import getcwd, chdir
-    from os.path import dirname
-    from heap import Transpiler, Lexer, Builder
-
-    old_dir = getcwd()
-
-    dt = loader(input_filepath)
-    chdir(dirname(input_filepath))
-
-    l = Lexer(dt)
-    toks = l.lex()
-
-    b = Builder(toks)
-    tree = b.parse()
-
-    c = Transpiler(tree)
-    fcontent = c.compile()
-
-    chdir(old_dir)
-
-    with open(output_filepath, "w") as f:
-        f.writelines(fcontent)
-
-
-@__wrapper.command()
 def repr():
     from heap.repr import repr
 
