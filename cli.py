@@ -35,6 +35,31 @@ def repr():
     repr()
 
 
+@__wrapper.command()
+@click.argument("filepath", type=click.Path(exists=False))
+@click.argument("output")
+def cppheap(filepath, output):
+    from heap.cppheap.emitter import Emitter
+    from heap.asts import Root
+    from heap import Lexer, Builder
+    from heap.loader import loader
+
+    body = loader(filepath)
+
+    l = Lexer(body)
+    lex = l.lex()
+
+    b = Builder(lex)
+    r = b.parse()
+
+    e = Emitter(r)
+
+    a = e.emit()
+
+    with open(output, "w") as f:
+        f.writelines(a)
+
+
 @__wrapper.group()
 def heapack():
     """Heap默认的包管理器"""
