@@ -1,6 +1,10 @@
 // Heap对象实现
 // Chhongzh
 
+#ifndef __HEAP_OBJECT_HPP
+#define __HEAP_OBJECT_HPP
+#endif
+
 class HeapObject
 {
 public:
