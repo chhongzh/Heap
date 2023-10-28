@@ -1,5 +1,5 @@
 from .ops import OPS
-from .token import Token
+from .token import MetaInfo, Token
 from .types import OBJ, ID, KEYWORD
 from .keywords import KEYWORDS
 from . import hook
@@ -25,25 +25,44 @@ class Lexer:
 
         while self.current:
             if self.current in OPS:
-                self.tok.append(Token(OPS[self.current], self.current))
+                self.tok.append(
+                    Token(OPS[self.current], self.current, MetaInfo(self.pos, self.pos))
+                )
                 self.advance()
             elif self.current == "[":
-                self.tok.append(Token(OBJ, self.expr_list()))
+                temp_pos = self.pos
+                self.tok.append(
+                    Token(OBJ, self.expr_list(), MetaInfo(temp_pos, temp_pos))
+                )
 
             elif self.current == "#":
                 self.advance()
                 self.comment_match()
             elif self.current == '"':
                 self.advance()
-                self.tok.append(Token(OBJ, self.string_match()))
+
+                start_pos = self.pos
+                data = self.string_match()
+                end_pos = self.pos
+
+                self.tok.append(Token(OBJ, data, MetaInfo(start_pos, end_pos)))
             elif self.number_check():
-                self.tok.append(Token(OBJ, self.num_match()))
+                start_pos = self.pos
+                data = self.num_match()
+                end_pos = self.pos
+                self.tok.append(Token(OBJ, data, MetaInfo(start_pos, end_pos)))
             elif self.current.isalpha():
+                start_pos = self.pos
+
                 val = self.id_match()
                 if val in KEYWORDS:
-                    self.tok.append(Token(KEYWORD, val))
+                    self.tok.append(
+                        Token(KEYWORD, val, MetaInfo(start_pos, start_pos + len(val)))
+                    )
                 else:
-                    self.tok.append(Token(ID, val))
+                    self.tok.append(
+                        Token(ID, val, MetaInfo(start_pos, start_pos + len(val)))
+                    )
             else:
                 self.advance()
 
