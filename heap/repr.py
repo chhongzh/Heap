@@ -50,13 +50,11 @@ def repr() -> None:
     var_ctx = {}
     command = {}
 
-    def rprompt():
-        return f"{ln}"
-
     while True:
         try:
-            code = input()
+            code = input("> ")
         except KeyboardInterrupt:
+            print()
             hook._raise_error(InputError("stdin", 0))
             continue
 
