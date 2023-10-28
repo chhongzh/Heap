@@ -28,9 +28,6 @@ def repr() -> None:
     from os.path import dirname
     from os import getcwd, chdir
 
-    from prompt_toolkit import PromptSession
-    from prompt_toolkit.styles import Style
-
     from heap import Lexer, Builder, Runner
     from heap.asts import Root
 
@@ -40,7 +37,6 @@ def repr() -> None:
     from heap.error import InputError
 
     print("Heap Lang")
-    session = PromptSession()
     ln = 1  # 当前行数
 
     old = getcwd()
@@ -54,23 +50,12 @@ def repr() -> None:
     var_ctx = {}
     command = {}
 
-    style = Style.from_dict(
-        {
-            "rprompt": "bg:#CCCCCC #000000",
-        }
-    )
-
     def rprompt():
         return f"{ln}"
 
     while True:
         try:
-            code = session.prompt(
-                "< ",
-                rprompt=rprompt,
-                style=style,
-                mouse_support=True,
-            )
+            code = input()
         except KeyboardInterrupt:
             hook._raise_error(InputError("stdin", 0))
             continue
