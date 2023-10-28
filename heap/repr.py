@@ -1,14 +1,26 @@
 # Heap Lang repr实现
 # chhongzh @ 2023.8.23
 # 马上就要开学喽!
+from heap.eprint import print_error
+
 
 PRINT_BUFFER = []
+
+
+class CatchError(Exception):
+    pass
 
 
 def _print(value):
     global PRINT_BUFFER
     PRINT_BUFFER.append(value)
     print(value, end="")
+
+
+def print_and_stop(error):
+    print_error(error)
+
+    raise CatchError()
 
 
 def repr() -> None:
@@ -78,7 +90,15 @@ def repr() -> None:
         toks = l.lex()
 
         b = Builder(toks)
-        ast_tree = b.parse()
+
+        hook._raise_error = print_and_stop
+
+        try:
+            ast_tree = b.parse()
+        except CatchError:
+            continue
+
+        hook._raise_error = print_error
 
         ast_tree.stack = stack  # 上下文
         ast_tree.fn_ctx = fn_ctx  # 上下文
@@ -89,7 +109,7 @@ def repr() -> None:
         r.run()
 
         # 自动换行:
-        if len(PRINT_BUFFER) > 0 and PRINT_BUFFER[-1][-1] != "\n":
+        if len(PRINT_BUFFER) > 0 and str(PRINT_BUFFER[-1][-1]) != "\n":
             print("")
 
         del PRINT_BUFFER[:]  # 释放
