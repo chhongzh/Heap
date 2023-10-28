@@ -92,7 +92,7 @@ def repr() -> None:
         r.run()
 
         # 自动换行:
-        if len(PRINT_BUFFER) > 0 and str(PRINT_BUFFER[-1][-1]) != "\n":
+        if len(PRINT_BUFFER) > 0 and str(PRINT_BUFFER[-1])[-1] != "\n":
             print("")
 
         del PRINT_BUFFER[:]  # 释放
