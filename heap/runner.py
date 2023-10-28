@@ -185,8 +185,8 @@ class Runner:
                     elif op == "notequal" and l1 != l2:
                         self.visits(body, father)
                         return
-                else:
-                    self.visits(node.bodys[-1], father)
+
+                self.visits(node.bodys[-1], father)
 
             elif len(node.l1s) == len(node.bodys):
                 for l1, op, l2, body in zip(node.l1s, node.ops, node.l2s, node.bodys):
@@ -210,10 +210,8 @@ class Runner:
                     elif op == "big" and l1 > l2:
                         self.visits(body, father)
                         return
-                    else:
-                        return
-                else:
-                    self.visits(node.bodys[-1], father)
+
+                self.visits(node.bodys[-1], father)
             else:
                 raise Exception(len(node.l1s), len(node.bodys))
 
