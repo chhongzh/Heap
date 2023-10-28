@@ -10,7 +10,7 @@ endfunc
 func fninput var:
     get var;
     print;
-    input;
+    input "";
     return $;
 endfunc
 
