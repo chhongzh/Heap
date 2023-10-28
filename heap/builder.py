@@ -27,7 +27,7 @@ from .types import OBJ, SEM, VARDEF, KEYWORD, REPLACE, ID, COLON
 from .keywords import KEYWORDS
 from os.path import exists
 from . import hook
-from .error import ERRDICT
+from .error import ERRDICT, SyntaxErr
 
 
 class Builder:
@@ -38,65 +38,84 @@ class Builder:
         self.root = []
 
     def advance(self):
+        """下一个token"""
         self.pos += 1
         if self.pos >= len(self.toks):
             self.tok = None
         else:
             self.tok = self.toks[self.pos]
 
+    def eat(self, types: list):
+        """检查类型并获得下一个token"""
+        if not self.tok or self.tok.type not in types:
+            hook._raise_error(
+                SyntaxErr(
+                    self.tok,
+                    self.pos,
+                    f"Need types:{repr(types)} , but get {self.tok.type if self.tok else 'None'}",
+                )
+            )
+
+        self.advance()
+
     def parse(self):
+        """构建Heap AST"""
         self.advance()
         while self.tok:
             self.root.append(self.expr())
         return Root(self.root)
 
     def expr(self):
+        """解析一句表达式"""
         if self.tok.type == KEYWORD:
             match self.tok.value:
                 case "func":
                     t = self.match_fn()
+
                     return t
                 case "div":
                     self.advance()
-                    self.advance()
+                    self.eat([SEM])  # SEM
 
                     return Div()
                 case "mul":
                     self.advance()
-                    self.advance()
+                    self.eat([SEM])  # SEM
 
                     return Mul()
                 case "set":
                     t = self.match_set()
-                    self.advance()  # SEM
+                    self.eat([SEM])  # SEM  # SEM
+
                     return t
                 case "get":
                     t = self.match_get()
-                    self.advance()
+                    self.eat([SEM])  # SEM
+
                     return t
                 case "push":
                     t = self.match_push()
-                    self.advance()  # SEM
+                    self.eat([SEM])  # SEM  # SEM
 
                     return t
                 case "print":
                     self.advance()  # PRINT
-                    self.advance()  # SEM
+                    self.eat([SEM])  # SEM  # SEM
 
                     return Print()
                 case "add":
                     self.advance()  # ADD
-                    self.advance()  # SEM
+                    self.eat([SEM])  # SEM  # SEM
 
                     return Add()
                 case "pop":
                     self.advance()  # pop
-                    self.advance()  # SEM
+                    self.eat([SEM])  # SEM  # SEM
 
                     return Pop()
                 case "sub":
                     self.advance()  # SUB
-                    self.advance()  # SEM
+                    self.eat([SEM])  # SEM  # SEM
 
                     return Sub()
                 case "return":
@@ -115,8 +134,8 @@ class Builder:
                 case "input":
                     self.advance()  # Input
                     title = Replace if self.tok.type == REPLACE else self.tok.value
-                    self.advance()  # title
-                    self.advance()  # sem
+                    self.eat([OBJ])  # title
+                    self.eat([SEM])  # SEM  # sem
                     return Input(title)
 
                 case "iter":
@@ -124,15 +143,16 @@ class Builder:
         elif self.tok.type == ID:
             return self.match_call()
 
-        self.catch_error()
+        self.catch_error()  # 捕捉错误(无法识别的tok)
         self.advance()
-        # raise Exception("Unknow", self.tok, self.pos)
 
     def match_if(self):
-        l1s = []
-        ops = []
-        l2s = []
-        bodys = []
+        """捕捉IF语句"""
+
+        l1s = []  # 条件
+        ops = []  # 符号
+        l2s = []  # 条件
+        bodys = []  # 块语句
 
         while self.tok.value != "endif":
             l1, op, l2, body = self.if_const()
@@ -142,7 +162,7 @@ class Builder:
                 l2s.append(l2)
             bodys.append(body)
 
-        self.advance()  # ENDIF
+        self.eat([KEYWORD])  # ENDIF
 
         return If(l1s, ops, l2s, bodys)
 
@@ -151,7 +171,7 @@ class Builder:
 
         if self.tok.value == "else":
             self.advance()  # skip ELSE
-            self.advance()  # skip ;
+            self.eat([COLON])  # skip ;
 
             while self.tok.value not in ("endif", "else", "elif"):
                 body.append(self.expr())
@@ -165,7 +185,7 @@ class Builder:
         l2 = Replace if self.tok.type == REPLACE else self.tok.value
         self.advance()
 
-        self.advance()  # skip SEM
+        self.eat([COLON])  # skip SEM
 
         while self.tok.value not in ("endif", "else", "elif"):
             body.append(self.expr())
@@ -197,7 +217,7 @@ class Builder:
             else:
                 args.append(self.tok.value)
             self.advance()
-        self.advance()  # SEM
+        self.eat([SEM])  # SEM
         return Call(name, args)
 
     def match_push(self):
@@ -218,7 +238,7 @@ class Builder:
         expr2 = Replace if self.tok.type == REPLACE else self.tok.value
 
         self.advance()  # skip expr2
-        self.advance()  # skip :
+        self.eat([COLON])  # skip :
 
         body = []
         while self.tok.value != "endwhile":
@@ -253,21 +273,15 @@ class Builder:
 
         self.advance()  # skip func
 
-        if self.check_none():
-            return
-
         name = self.tok.value
 
         self.advance()  # skip Name
-
-        if self.check_none():
-            return
 
         while self.tok and self.tok.type != COLON:
             args.append(self.tok.value)
             self.advance()
 
-        self.advance()  # COLON
+        self.eat([COLON])  # COLON
 
         while self.tok and self.tok.value != "endfunc":
             body.append(self.expr())
@@ -299,7 +313,7 @@ class Builder:
         path = self.tok.value
 
         self.advance()  # path
-        self.advance()  # ;
+        self.eat([SEM])  # ;
 
         return Include(path)
 
@@ -328,12 +342,12 @@ class Builder:
         iter_name = self.tok.value
         self.advance()
 
-        self.advance()  # skip :
+        self.eat([COLON])  # skip :
 
         while not self.current_is_keyword("enditer"):
             body.append(self.expr())
 
-        self.advance()
+        self.advance()  # Skip enditer
         return Iter(iter_item, iter_name, body)
 
     def current_is_keyword(self, keyword: str):
