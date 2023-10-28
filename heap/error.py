@@ -37,6 +37,10 @@ class NotDefine(Error):
     pass
 
 
+class SyntaxErr(Error):
+    pass
+
+
 ERRDICT = {
     "BaseError": BaseError,
     "Error": Error,
