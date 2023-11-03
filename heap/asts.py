@@ -194,3 +194,13 @@ class Iter(Node):
 
     def __repr__(self):
         return f"Iter({repr(self.val)},{repr(self.iter_name)},{repr(self.body)})"
+
+
+class LinkExpr(Node):
+    def __init__(self, value, call_chain: list, arg_chain: list) -> None:
+        self.value = value
+        self.call_chain = call_chain
+        self.arg_chain = arg_chain
+
+    def __repr__(self):
+        return f"LinkExpr({repr(self.value)},{repr(self.call_chain)},{repr(self.arg_chain)})"

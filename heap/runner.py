@@ -1,10 +1,10 @@
 # Chhongzh 2023
 # Heap Lang
-from os import getcwd
 from .error import *
 from .asts import (
     Div,
     Input,
+    LinkExpr,
     Mul,
     Pop,
     Root,
@@ -72,6 +72,7 @@ class Runner:
         elif isinstance(node, Print):
             hook._print(self.try_pop(father))
         elif isinstance(node, Call):
+            print(node.__repr__())
             self.call(node, father)
         elif isinstance(node, While):
             self.expr_while(node, father)
@@ -95,6 +96,17 @@ class Runner:
             self.load_module(node.path, father)
         elif isinstance(node, Iter):
             self.expr_iter(node, father)
+        elif isinstance(node, LinkExpr):
+            self.expr_link(node, father)
+
+    def expr_link(self, node: LinkExpr, father: Root | Func):
+        root_value = self.expr_args([node.value], father)[0]
+
+        for fn_name, fn_val in zip(node.call_chain, node.arg_chain):
+            value = self.call(Call(fn_name, [root_value, *fn_val]), father)
+            root_value = value
+
+        father.stack.append(root_value)  # 别忘了将最终结果返回去
 
     def load_module(self, path: str, father: Func | Root):
         """加载一个模块"""
@@ -278,8 +290,9 @@ class Runner:
         func_obj = father.fn_ctx[node.name]
 
         if not isinstance(func_obj, Func):
-            func_obj(father, *args_list)  # 如果是Python Function
-            return
+            value = func_obj(father, *args_list)  # 如果是Python Function
+            if value:
+                return value
 
         args_dict = {}  # 解析数据
         for name, data in zip(func_obj.args, args_list):

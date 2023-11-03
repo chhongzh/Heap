@@ -3,9 +3,9 @@
 from subprocess import run
 from sys import executable
 from shutil import rmtree, copytree
-from os import chdir, rename
+from os import chdir, rename, name
 
-print("Try to build.")
+print("准备构建")
 
 rmtree("dist", ignore_errors=True)
 
@@ -16,4 +16,6 @@ print("复制heap资源文件到目录")
 copytree("heap/", "dist/heap/")
 
 print("Copy done")
-print('Out in "dist/", bin file in "dist/cli.bin"')
+print(f'Out in "dist-{name}/", bin file in "dist/cli.bin"')
+
+rename("dist", f"dist-{name}")

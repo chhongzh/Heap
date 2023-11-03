@@ -1,0 +1,6 @@
+# 演示Upper
+
+include "string";
+include "print_it";
+
+"upper By func!" -> upper -> print_it;

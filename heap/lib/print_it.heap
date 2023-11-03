@@ -1,0 +1,11 @@
+# Heap std Libs 
+# Chhongzh @ 2023
+
+# 这个函数支持链式调用!
+# "Value" -> print_it;
+# 可以输出"Value"
+
+func print_it v: # 一个简单的输出
+    get v;
+    print;
+endfunc

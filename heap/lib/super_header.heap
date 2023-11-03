@@ -9,3 +9,5 @@ include "random";
 include "terminal";
 include "functionic";
 include "endl";
+include "print_it";
+include "string";

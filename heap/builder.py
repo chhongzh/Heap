@@ -4,6 +4,7 @@ from .asts import (
     Command,
     Div,
     Iter,
+    LinkExpr,
     Mul,
     Replace,
     Root,
@@ -23,7 +24,7 @@ from .asts import (
     Try,
     While,
 )
-from .types import OBJ, SEM, VARDEF, KEYWORD, REPLACE, ID, COLON
+from .types import LINK, OBJ, SEM, VARDEF, KEYWORD, REPLACE, ID, COLON
 from .keywords import KEYWORDS
 from os.path import exists
 from . import hook
@@ -143,8 +144,41 @@ class Builder:
         elif self.tok.type == ID:
             return self.match_call()
 
+        elif self.tok.type == OBJ or self.tok.type == REPLACE:
+            if self.toks[self.pos + 1].type == LINK:
+                return self.match_link()
+
         self.catch_error()  # 捕捉错误(无法识别的tok)
         self.advance()
+
+    def match_link(self):
+        value = self.tok.value if self.tok.type != REPLACE else Replace
+        call_chain = []
+        arg_chain = []
+
+        self.eat([OBJ, REPLACE])
+
+        while self.tok.type != SEM:
+            arg = []
+            self.eat([LINK])
+
+            call_chain.append(self.tok.value)
+            self.eat([ID])
+
+            while self.tok.type not in (SEM, LINK):
+                print(self.tok)
+                if self.tok.type == REPLACE:
+                    arg.append(Replace)
+                else:
+                    arg.append(self.tok.value)
+
+                self.eat([REPLACE, OBJ])
+
+            arg_chain.append(arg)
+
+        self.eat([SEM])
+
+        return LinkExpr(value, call_chain, arg_chain)
 
     def match_if(self):
         """捕捉IF语句"""

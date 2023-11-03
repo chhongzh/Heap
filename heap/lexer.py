@@ -1,6 +1,6 @@
 from .ops import OPS
 from .token import MetaInfo, Token
-from .types import OBJ, ID, KEYWORD
+from .types import OBJ, ID, KEYWORD, LINK
 from .keywords import KEYWORDS
 from . import hook
 from .error import LexerError
@@ -38,6 +38,11 @@ class Lexer:
             elif self.current == "#":
                 self.advance()
                 self.comment_match()
+            elif self.current == "-":
+                self.advance()
+                if self.current == ">":
+                    self.tok.append(Token(LINK, "->", MetaInfo(self.pos, self.pos)))
+                    self.advance()
             elif self.current == '"':
                 self.advance()
 

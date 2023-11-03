@@ -53,3 +53,6 @@ Hello world
 [On this Repo](docs/README.md)
 
 [On github.io](https://chhongzh.github.io#/docs/README)
+
+## Repobeats
+![Alt]( https://repobeats.axiom.co/api/embed/9f84794cea3ab96b05702f6a23f1bcfb84164b48.svg)
