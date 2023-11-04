@@ -105,7 +105,8 @@ class Runner:
             value = self.call(Call(fn_name, [root_value, *fn_val]), father)
             root_value = value
 
-        father.stack.append(root_value)  # 别忘了将最终结果返回去
+        if root_value:
+            father.stack.append(root_value)  # 别忘了将最终结果返回去
 
     def load_module(self, path: str, father: Func | Root):
         """加载一个模块"""
