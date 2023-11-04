@@ -1,4 +1,8 @@
-from .stdlibs import LIBS
+# Heap @ 2023
+# chhongzh
+
+"""构建Heap AST树的模块"""
+
 from .token import Token
 from .asts import (
     Command,
@@ -21,14 +25,11 @@ from .asts import (
     Include,
     Pop,
     Input,
-    Try,
     While,
 )
-from .types import LINK, OBJ, SEM, VARDEF, KEYWORD, REPLACE, ID, COLON
-from .keywords import KEYWORDS
-from os.path import exists
+from .types import LINK, OBJ, SEM, KEYWORD, REPLACE, ID, COLON
 from . import hook
-from .error import ERRDICT, SyntaxErr
+from .error import NotCloseTag, ObjError, SyntaxErr
 
 
 class Builder:
@@ -50,7 +51,7 @@ class Builder:
     def eat(self, types: list):
         """检查类型并获得下一个token"""
         if not self.tok or self.tok.type not in types:
-            hook._raise_error(
+            hook.raise_error(
                 SyntaxErr(
                     self.tok,
                     self.pos,
@@ -142,17 +143,28 @@ class Builder:
 
                 case "iter":
                     return self.match_iter()
+
+                case _:
+                    hook.print_error(SyntaxErr(self.tok.value, self.pos, "未知的符号"))
+
+                    return None
         elif self.tok.type == ID:
             return self.match_call()
 
-        elif self.tok.type == OBJ or self.tok.type == REPLACE:
+        elif self.tok.type in (OBJ, REPLACE):
             if self.toks[self.pos + 1].type == LINK:
                 return self.match_link()
+
+            return None
 
         self.catch_error()  # 捕捉错误(无法识别的tok)
         self.advance()
 
+        return None
+
     def match_link(self):
+        """捕捉Match Link"""
+
         value = self.tok.value if self.tok.type != REPLACE else Replace
         call_chain = []
         arg_chain = []
@@ -201,6 +213,8 @@ class Builder:
         return If(l1s, ops, l2s, bodys)
 
     def if_const(self):
+        "匹配if结构"
+
         body = []
 
         if self.tok.value == "else":
@@ -227,6 +241,8 @@ class Builder:
         return l1, op, l2, body
 
     def match_return(self):
+        "匹配return语句"
+
         returns = []
 
         while self.tok.type != SEM:
@@ -241,6 +257,8 @@ class Builder:
         return Return(returns)
 
     def match_call(self):
+        "匹配调用语句"
+
         name = self.tok.value
         args = []
         self.advance()
@@ -255,6 +273,8 @@ class Builder:
         return Call(name, args)
 
     def match_push(self):
+        "匹配push语句"
+
         self.advance()  # skip Push
 
         val = self.tok.value
@@ -262,6 +282,8 @@ class Builder:
         return Push(val)
 
     def match_while(self):
+        "匹配while语句"
+
         self.advance()  # skip while
         expr1 = Replace if self.tok.type == REPLACE else self.tok.value
 
@@ -283,6 +305,8 @@ class Builder:
         return While(expr1, op, expr2, body)
 
     def match_get(self):
+        "匹配get语句"
+
         self.advance()  # skip GET
 
         name = self.tok.value
@@ -292,6 +316,8 @@ class Builder:
         return Get(name)
 
     def match_set(self):
+        "匹配set语句"
+
         self.advance()  # skip SET
 
         name = self.tok.value
@@ -302,6 +328,8 @@ class Builder:
         return Set(name, value)
 
     def match_fn(self):
+        "匹配函数定义"
+
         args = []
         body = []
 
@@ -325,6 +353,8 @@ class Builder:
         return Func(name, args, body)
 
     def match_command(self):
+        "匹配命令定义"
+
         self.advance()  # skip COMMAND
 
         name = self.tok.value
@@ -342,6 +372,8 @@ class Builder:
         return Command(name, body)
 
     def match_include(self):
+        "匹配include语句"
+
         self.advance()
 
         path = self.tok.value
@@ -352,22 +384,27 @@ class Builder:
         return Include(path)
 
     def catch_error(self):
-        from .error import ObjError, NotCloseTag
+        "生成并捕捉错误"
 
         if not self.tok:
-            hook._raise_error(NotCloseTag("", self.pos))
+            hook.raise_error(NotCloseTag("", self.pos))
 
         elif self.tok.type == OBJ:
-            hook._raise_error(
+            hook.raise_error(
                 ObjError(self.tok.value, self.pos, "OBJ不能单独作为一行, 除非Link表达式")
             )
 
     def check_none(self):
+        """检查是否是None"""
+
         if not self.tok:  # 保护
             self.catch_error()
             return True
+        return False
 
     def match_iter(self):
+        "匹配iter"
+
         self.advance()  # skip keyword
 
         iter_item = Replace if self.tok.type == REPLACE else self.tok.value
@@ -387,4 +424,6 @@ class Builder:
         return Iter(iter_item, iter_name, body)
 
     def current_is_keyword(self, keyword: str):
-        return self.tok.type == KEYWORD and self.tok.value == keyword
+        "判断当前是否是关键字"
+
+        return self.tok.value == keyword and self.tok.type == KEYWORD

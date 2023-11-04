@@ -15,6 +15,4 @@ __all__ = [
     "Builder",
     # Runner
     "Runner",
-    # Transpiler
-    "Transpiler",
 ]

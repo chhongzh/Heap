@@ -1,6 +1,17 @@
 # Chhongzh 2023
 # Heap Lang
-from .error import *
+
+"""
+Heap的运行器,
+运行一段ast
+"""
+
+import sys
+from importlib import import_module
+from inspect import isfunction
+from os.path import exists, dirname, join, split
+
+from .error import BuilderErr, CallErr, IncludeError, NotDefine
 from .asts import (
     Div,
     Input,
@@ -24,19 +35,23 @@ from .asts import (
     While,
     Iter,
 )
-from os.path import exists, dirname, join
-from inspect import isfunction
-from . import hook
 from .loader import loader
-from . import Lexer, Builder
 from .stdlibs import HEAP_LIBS, LIBS
-from importlib import import_module
-import sys
-from os.path import split
+from . import Lexer, Builder
+from . import hook
 
 
 class Runner:
+    """Heap 解析器"""
+
     def __init__(self, root: Root, path: str):
+        """
+        传入一个Root节点, 并运行
+
+        path : 导入路径
+        root : 根节点
+        """
+
         self.root = root
         self.include_path = [path]
 
@@ -70,7 +85,7 @@ class Runner:
         elif isinstance(node, Pop):
             self.try_pop(father)
         elif isinstance(node, Print):
-            hook._print(self.try_pop(father))
+            hook.print_val(self.try_pop(father))
         elif isinstance(node, Call):
             self.call(node, father)
         elif isinstance(node, While):
@@ -99,6 +114,8 @@ class Runner:
             self.expr_link(node, father)
 
     def expr_link(self, node: LinkExpr, father: Root | Func):
+        "解析Link语句"
+
         root_value = self.expr_args([node.value], father)[0]
 
         for fn_name, fn_val in zip(node.call_chain, node.arg_chain):
@@ -112,7 +129,7 @@ class Runner:
         """加载一个模块"""
         if path in LIBS:  # 对于是Python文件的模块
             md = import_module(f".lib.{LIBS[path]}", "heap")
-            for name in md.__dir__():
+            for name in dir(md):
                 if (
                     not name.startswith("__")
                     and not name.endswith("__")
@@ -120,7 +137,7 @@ class Runner:
                 ):
                     father.fn_ctx[name] = md.__dict__[name]
             return
-        elif path in HEAP_LIBS:  # 对于是Heap文件的模块
+        if path in HEAP_LIBS:  # 对于是Heap文件的模块
             content = loader(join(split(__file__)[0], "lib", HEAP_LIBS[path]))
             lexer = Lexer(content)
             toks = lexer.lex()
@@ -135,7 +152,7 @@ class Runner:
         self.include_path.append(dirname(path))  # 将解析目录加入到栈
 
         if not exists(path):
-            hook._raise_error(IncludeError(path, -1, "Not a file."))
+            hook.raise_error(IncludeError(path, -1, "Not a file."))
             return
 
         content = loader(path)
@@ -168,8 +185,10 @@ class Runner:
         return args_list
 
     def expr_if(self, node: If, father: Root | Func):
-        if not (len(node.l1s) == len(node.l2s) == len(node.ops)):
-            raise Exception
+        "解析if语句"
+
+        if not len(node.l1s) == len(node.l2s) == len(node.ops):
+            hook.print_error(BuilderErr("", -1, "数量不对"))
 
         else:
             # if-else mode:
@@ -177,24 +196,27 @@ class Runner:
                 for l1, op, l2, body in zip(
                     node.l1s, node.ops, node.l2s, node.bodys[:-1]
                 ):
-                    l1, op, l2 = self.expr_args([l1, op, l2], father, False)
+                    temp_data = self.expr_args([l1, op, l2], father, False)
+                    l1 = temp_data[0]
+                    op = temp_data[1]
+                    l2 = temp_data[2]
 
                     if op == "equal" and l1 == l2:
                         self.visits(body, father)
                         return
-                    elif op == "bigequal" and l1 >= l2:
+                    if op == "bigequal" and l1 >= l2:
                         self.visits(body, father)
                         return
-                    elif op == "small" and l1 < l2:
+                    if op == "small" and l1 < l2:
                         self.visits(body, father)
                         return
-                    elif op == "big" and l1 > l2:
+                    if op == "big" and l1 > l2:
                         self.visits(body, father)
                         return
-                    elif op == "smallequal" and l1 <= l2:
+                    if op == "smallequal" and l1 <= l2:
                         self.visits(body, father)
                         return
-                    elif op == "notequal" and l1 != l2:
+                    if op == "notequal" and l1 != l2:
                         self.visits(body, father)
                         return
 
@@ -202,32 +224,37 @@ class Runner:
 
             elif len(node.l1s) == len(node.bodys):
                 for l1, op, l2, body in zip(node.l1s, node.ops, node.l2s, node.bodys):
-                    l1, op, l2 = self.expr_args([l1, op, l2], father, False)
+                    temp_data = self.expr_args([l1, op, l2], father, False)
+                    l1 = temp_data[0]
+                    op = temp_data[1]
+                    l2 = temp_data[2]
 
                     if op == "equal" and l1 == l2:
                         self.visits(body, father)
                         return
-                    elif op == "bigequal" and l1 >= l2:
+                    if op == "bigequal" and l1 >= l2:
                         self.visits(body, father)
                         return
-                    elif op == "small" and l1 < l2:
+                    if op == "small" and l1 < l2:
                         self.visits(body, father)
                         return
-                    elif op == "smallequal" and l1 <= l2:
+                    if op == "smallequal" and l1 <= l2:
                         self.visits(body, father)
                         return
-                    elif op == "notequal" and l1 != l2:
+                    if op == "notequal" and l1 != l2:
                         self.visits(body, father)
                         return
-                    elif op == "big" and l1 > l2:
+                    if op == "big" and l1 > l2:
                         self.visits(body, father)
                         return
 
                 self.visits(node.bodys[-1], father)
             else:
-                raise Exception(len(node.l1s), len(node.bodys))
+                hook.print_error(BuilderErr("", -1, "未知的错误"))
 
     def expr_while(self, node: While, father: Root | Func):
+        "解析while语句"
+
         temp = self.expr_args([node.expr1, node.op, node.expr2], father, False)
         expr1 = temp[0]
         op = temp[1]
@@ -273,9 +300,11 @@ class Runner:
                 expr2 = temp[1]
 
     def call(self, node: Call, father: Root | Func):
+        "调用一个函数"
+
         if node.name in father.command:  # 指令不能有参数
             if node.args:
-                raise Exception
+                hook.print_error(CallErr(node.name, -1, "调用command不能有参数"))
 
             self.visits(father.command[node.name].body, father)
             return
@@ -284,7 +313,7 @@ class Runner:
 
         # 查找函数对象
         if node.name not in father.fn_ctx:
-            hook._raise_error(NotDefine(node.name, -1))
+            hook.raise_error(NotDefine(node.name, -1))
             return
 
         func_obj = father.fn_ctx[node.name]
@@ -314,12 +343,16 @@ class Runner:
                 return val
 
     def try_pop(self, father: Root | Func):
+        "尝试获取一个堆栈数据"
+
         try:
             return father.stack.pop()
         except IndexError:
             return None
 
     def expr_iter(self, node: Iter, father: Root | Func):
+        "解析iter语句"
+
         iter_name = node.iter_name
 
         val = self.expr_args([node.val], father)[0]

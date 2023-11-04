@@ -56,3 +56,11 @@ Hello world
 
 ## Repobeats
 ![Alt]( https://repobeats.axiom.co/api/embed/9f84794cea3ab96b05702f6a23f1bcfb84164b48.svg)
+
+## PyLint
+```
+pylint cli.py heap --disable=R0903,C0115,R0911,W0602,R0912,R1710
+
+-------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 9.99/10, +0.01)
+```

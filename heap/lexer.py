@@ -1,3 +1,10 @@
+# Heap @ 2023
+# chhongzh
+
+"""
+Heap的Lexer
+"""
+
 from .ops import OPS
 from .token import MetaInfo, Token
 from .types import OBJ, ID, KEYWORD, LINK
@@ -7,6 +14,8 @@ from .error import LexerError
 
 
 class Lexer:
+    """Heap 分词器"""
+
     def __init__(self, content: str):
         self.content = content
         self.pos = -1
@@ -14,6 +23,8 @@ class Lexer:
         self.tok = []
 
     def advance(self):
+        """下一个字符"""
+
         self.pos += 1
         if self.pos >= len(self.content):
             self.current = None
@@ -21,6 +32,8 @@ class Lexer:
             self.current = self.content[self.pos]
 
     def lex(self):
+        """分词"""
+
         self.advance()
 
         while self.current:
@@ -73,10 +86,9 @@ class Lexer:
 
         return self.tok
 
-    def number_check(self):
-        return self.isnum() or self.current == "-" or self.current == "."
-
     def string_match(self):
+        "匹配字符串"
+
         cache = []
         while self.current and self.current != '"':
             if self.current == "\\":
@@ -89,7 +101,7 @@ class Lexer:
                     case '"':
                         cache.append('"')
                     case _:
-                        hook._raise_error(
+                        hook.raise_error(
                             LexerError(f"\\{self.current}", self.pos, "未知的转义")
                         )
                 self.advance()
@@ -100,48 +112,57 @@ class Lexer:
         return "".join(cache)
 
     def is_num(self):
+        """判断是否是数字"""
+
         self.current: str | None
         return self.current == "-" or self.current.isdecimal()
 
     def number_check(self):
+        """判断是否是数字部分"""
+
         return self.isnum() or self.current == "-" or self.current == "."
 
     def isnum(self):
+        "检查是否是数字"
+
         return self.current.isdecimal()  # 使用isdigit会将部分非正常数字的unicode字符算入
 
     def num_match(self):
+        """数字匹配"""
+
         is_negtive = False
         dot = False
         cache = []
         while self.current is not None and self.number_check():
             if self.current == "-":
                 if is_negtive:
-                    hook._raise_error(LexerError("", self.pos, "Invalid negative."))
+                    hook.raise_error(LexerError("", self.pos, "Invalid negative."))
                 else:
                     is_negtive = True
                     cache.append("-")
             elif self.isdot():
                 if dot:
-                    hook._raise_error(LexerError("", self.pos, "Invalid dot."))
+                    hook.raise_error(LexerError("", self.pos, "Invalid dot."))
                 else:
                     dot = True
                     cache.append(".")
             elif self.isnum():
                 cache.append(self.current)
             else:
-                hook._raise_error(LexerError("", self.pos, "Invalid number."))
+                hook.raise_error(LexerError("", self.pos, "Invalid number."))
 
             self.advance()
         if "." in cache:
             return float("".join(cache))
-        else:
-            return int("".join(cache))
+        return int("".join(cache))
 
     def isdot(self):
+        """判断当前是否为."""
+
         return self.current == "."
 
     def id_match(self):
-        from .ops import OPS
+        """解析ID"""
 
         cache = []
         while self.current:
@@ -159,12 +180,16 @@ class Lexer:
         return k
 
     def comment_match(self):
+        """解析注释"""
+
         lst = ["\n", "#"]
         while self.current and self.current not in lst:
             self.advance()
         self.advance()
 
     def expr_list(self):
+        """解析列表"""
+
         self.advance()  # skip [
 
         cache = []
@@ -182,7 +207,7 @@ class Lexer:
             elif self.number_check():
                 cache.append(self.num_match())
             elif self.current.isalpha():
-                hook._raise_error(LexerError(self.current, self.pos, "列表不应该出现id"))
+                hook.raise_error(LexerError(self.current, self.pos, "列表不应该出现id"))
             else:
                 self.advance()
 

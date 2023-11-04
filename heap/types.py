@@ -1,3 +1,10 @@
+# Heap @ 2023
+# chhongzh
+
+"""
+Heap 中 Token 的类型定义
+"""
+
 VARDEF = 0
 OBJ = 1
 ID = 2

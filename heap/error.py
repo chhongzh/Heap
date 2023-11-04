@@ -1,4 +1,18 @@
+# Heap @ 2023
+# chhongzh
+
+"""
+Heap中所有的错误类型
+"""
+
+
 class BaseError:
+    """
+    基础错误类型
+
+    请注意, 在代码中请勿抛出这个错误, 而是Error
+    """
+
     def __init__(self, val: str, pos: int, *args):
         self.args = args
         self.val = val
@@ -41,6 +55,14 @@ class SyntaxErr(Error):
     pass
 
 
+class CallErr(Error):
+    pass
+
+
+class BuilderErr(Error):
+    pass
+
+
 ERRDICT = {
     "BaseError": BaseError,
     "Error": Error,
@@ -50,4 +72,7 @@ ERRDICT = {
     "HeapOverflow": HeapOverflow,
     "IncludeError": IncludeError,
     "NotDefine": NotDefine,
+    "SyntaxErr": SyntaxErr,
+    "CallError": CallErr,
+    "BuilderErr": BuilderErr,
 }

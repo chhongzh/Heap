@@ -1,6 +1,13 @@
-from .token import Token
+# Heap @ 2023
+# chhongzh
+
+"""
+Heap的所有ast节点
+"""
+
 from typing import Any
 import abc
+from .token import Token
 
 
 class Node(abc.ABC):
@@ -9,7 +16,7 @@ class Node(abc.ABC):
 
 
 class Root(Node):
-    def __init__(self, body=[]):
+    def __init__(self, body: list = None):
         self.body = body
         self.var_ctx = {}
         self.fn_ctx = {}
@@ -20,6 +27,8 @@ class Root(Node):
         self.fn_ctx: dict[str, Func]
 
     def append(self, tok: Token):
+        """增加一个节点"""
+
         self.body: list
         self.body.append(tok)
 
@@ -33,7 +42,7 @@ class Try(Node):
 
 
 class Func(Node):
-    def __init__(self, name: str, args: list[str], body=[]):
+    def __init__(self, name: str, args: list[str], body: list = None):
         self.args = args
         self.name = name
         self.body = body
@@ -45,7 +54,7 @@ class Func(Node):
         self.fn_ctx: dict[str, Func]
 
     def append(self, tok: Token):
-        self.body: list
+        """添加一个节点"""
         self.body.append(tok)
 
     def __repr__(self):
@@ -71,27 +80,27 @@ class Get(Node):
 
 class Add(Node):
     def __repr__(self):
-        return f"Add()"
+        return "Add()"
 
 
 class Sub(Node):
     def __repr__(self):
-        return f"Sub()"
+        return "Sub()"
 
 
 class Div(Node):
     def __repr__(self):
-        return f"Div()"
+        return "Div()"
 
 
 class Mul(Node):
     def __repr__(self):
-        return f"Mul()"
+        return "Mul()"
 
 
 class Print(Node):
     def __repr__(self):
-        return f"Print()"
+        return "Print()"
 
 
 class Push(Node):
@@ -104,12 +113,12 @@ class Push(Node):
 
 class Replace(Node):
     def __repr__(self):
-        return f"Replace()"
+        return "Replace()"
 
 
 class Pop(Node):
     def __repr__(self):
-        return f"Pop()"
+        return "Pop()"
 
 
 class Input(Node):

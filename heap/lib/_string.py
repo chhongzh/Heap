@@ -27,3 +27,7 @@ def replace(father: Root | Func, val: str, old: str, new: str):
 
 def replace_count(father: Root | Func, val: str, old: str, new: str, count: int):
     return val.replace(old, new, count)
+
+
+def count(father: Root | Func, val: str, o: str):
+    return val.count(o)

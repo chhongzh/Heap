@@ -38,7 +38,7 @@ make_archive(
     f"heap-{HEAP_VERSION_STR}-{system()}-{machine()}",
 )
 
-rmtree(f"dist-{HEAP_VERSION_STR}-{system()}-{machine()}")
+# rmtree(f"dist-{HEAP_VERSION_STR}-{system()}-{machine()}")
 
 print(
     f'Out in "heap-{HEAP_VERSION_STR}-{system()}-{machine()}.zip", bin file in "dist/cli.bin"'

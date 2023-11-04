@@ -1,3 +1,10 @@
+# Heap @ 2023
+# chhongzh
+
+"""
+这个模块包含了一些基础库的路径
+"""
+
 LIBS = {
     "math": "_math",
     "array": "_arrayutils",

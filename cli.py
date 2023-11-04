@@ -1,5 +1,19 @@
 # coding=utf-8
+
+"""
+Heap @ 2023
+
+这是一个基于Python开发的编程语言, 使用Python3.11开发
+
+你可以在https://github.com/chhongzh/Heap查看更多信息
+"""
+from os.path import dirname
 import click
+
+from heap import Lexer, Builder, Runner
+from heap.repr import heap_repr
+from heap.loader import loader
+from heap.cppheap.emitter import Emitter
 
 
 @click.group()
@@ -11,9 +25,9 @@ def __wrapper():
 @click.argument("filepath", type=click.Path(exists=True))
 @click.argument("args", nargs=-1)
 def run(filepath, args):
-    from heap.loader import loader
-    from heap import Lexer, Builder, Runner
-    from os.path import dirname
+    """
+    运行Heap程序
+    """
 
     dt = loader(filepath)
 
@@ -29,20 +43,16 @@ def run(filepath, args):
 
 
 @__wrapper.command()
-def repr():
-    from heap.repr import repr
-
-    repr()
+def repr():  # pylint:disable=W0622
+    """REPR环境"""
+    heap_repr()
 
 
 @__wrapper.command()
 @click.argument("filepath", type=click.Path(exists=False))
 @click.argument("output")
 def cppheap(filepath, output):
-    from heap.cppheap.emitter import Emitter
-    from heap.asts import Root
-    from heap import Lexer, Builder
-    from heap.loader import loader
+    """转译heap源代码"""
 
     body = loader(filepath)
 
@@ -56,7 +66,7 @@ def cppheap(filepath, output):
 
     a = e.emit()
 
-    with open(output, "w") as f:
+    with open(output, "w", encoding="utf-8") as f:
         f.writelines(a)
 
 

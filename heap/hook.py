@@ -1,11 +1,21 @@
+# Heap @ 2023
+# chhongzh
+
+"Heap的钩子"
+
+import sys
 from .eprint import print_error
 
 
-def _print(val):
+def print_val(val):
+    "print钩子"
+
     print(val, end="")
 
 
-def _raise_error(error):
+def raise_error(error):
+    "抛出错误并退出"
+
     print_error(error)
 
-    exit(1)
+    sys.exit(1)

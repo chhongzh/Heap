@@ -1,3 +1,10 @@
+# Heap @ 2023
+# chhongzh
+
+"""
+Heap中的所有保留关键字
+"""
+
 KEYWORDS = [
     "func",
     "endfunc",

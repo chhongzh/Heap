@@ -1,7 +1,15 @@
 # Heap Lang repr实现
 # chhongzh @ 2023.8.23
 # 马上就要开学喽!
+
+"""Heap repr"""
+
+from os import getcwd
+from heap import Lexer, Builder, Runner
+from heap import hook
 from heap.eprint import print_error
+from heap.error import InputError
+from heap.version_info import HEAP_VERSION_STR
 
 
 PRINT_BUFFER = []
@@ -12,38 +20,31 @@ class CatchError(Exception):
 
 
 def _print(value):
+    "输出并缓存到BUFFER"
+
     global PRINT_BUFFER
     PRINT_BUFFER.append(value)
     print(value, end="")
 
 
 def print_and_stop(error):
+    "输出并抛出错误"
+
     print_error(error)
 
     raise CatchError()
 
 
-def repr() -> None:
-    from locale import getlocale
-    from os.path import dirname
-    from os import getcwd, chdir
-
-    from heap import Lexer, Builder, Runner
-    from heap.asts import Root
-
-    from heap import hook
-    from heap.eprint import print_error
-
-    from heap.error import InputError
-    from heap.version_info import HEAP_VERSION_STR
+def heap_repr() -> None:
+    "Heap repr主函数"
 
     print(f"Heap Lang V{HEAP_VERSION_STR}")
     ln = 1  # 当前行数
 
     old = getcwd()
 
-    hook._raise_error = print_error
-    hook._print = _print
+    hook.raise_error = print_error
+    hook.print_val = _print
 
     # 上下文数据
     stack = []
@@ -56,7 +57,7 @@ def repr() -> None:
             code = input("> ")
         except KeyboardInterrupt:
             print()
-            hook._raise_error(InputError("stdin", 0))
+            hook.raise_error(InputError("stdin", 0))
             continue
 
         code: str  # 类型注解
@@ -70,7 +71,7 @@ def repr() -> None:
             # 退出
             break
 
-        hook._raise_error = print_and_stop
+        hook.raise_error = print_and_stop
 
         l = Lexer(code)
         try:
@@ -85,7 +86,7 @@ def repr() -> None:
         except CatchError:
             continue
 
-        hook._raise_error = print_error
+        hook.raise_error = print_error
 
         ast_tree.stack = stack  # 上下文
         ast_tree.fn_ctx = fn_ctx  # 上下文

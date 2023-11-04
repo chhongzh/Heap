@@ -1,3 +1,11 @@
+# Heap @ 2023
+# chhongzh
+
+"""
+Heap中的Token数据结构
+"""
+
+
 from dataclasses import dataclass
 
 
@@ -8,9 +16,9 @@ class MetaInfo:
 
 
 class Token:
-    def __init__(self, type: int, value, meta: MetaInfo):
-        self.type = type
-        self.value = value
+    def __init__(self, token_type: int, token_value, meta: MetaInfo):
+        self.type = token_type
+        self.value = token_value
         self.meta = meta
 
     def __repr__(self) -> str:
