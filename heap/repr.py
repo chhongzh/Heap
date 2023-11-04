@@ -35,8 +35,9 @@ def repr() -> None:
     from heap.eprint import print_error
 
     from heap.error import InputError
+    from heap.version_info import HEAP_VERSION_STR
 
-    print("Heap Lang V1.5")
+    print(f"Heap Lang V{HEAP_VERSION_STR}")
     ln = 1  # 当前行数
 
     old = getcwd()
