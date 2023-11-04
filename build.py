@@ -2,7 +2,7 @@
 
 from subprocess import run
 from sys import executable
-from shutil import rmtree, copytree
+from shutil import rmtree, copytree, make_archive
 from os import chdir, rename
 from platform import system, machine
 from heap.version_info import HEAP_VERSION_STR
@@ -13,15 +13,33 @@ print("准备构建")
 rmtree("dist", ignore_errors=True)
 rmtree(f"heap-{HEAP_VERSION_STR}-{system()}-{machine()}", ignore_errors=True)
 
-run([executable, "-m", "nuitka", "cli.py", "--standalone", "--python-flag=nondebug"])
+run([executable, "-m", "nuitka", "cli.py", "--standalone"])
 rename("cli.dist", "dist")
 
 print("复制heap资源文件到目录")
 copytree("heap/", "dist/heap/")
 
 print("Copy done")
-print(
-    f'Out in "dist-{HEAP_VERSION_STR}-{system()}-{machine()}/", bin file in "dist/cli.bin"'
-)
+
+chdir("dist")
+
+try:
+    rename("cli.exe", "heap.exe")
+except:
+    rename("cli.bin", "heap.bin")
+
+chdir("../")
 
 rename("dist", f"dist-{HEAP_VERSION_STR}-{system()}-{machine()}")
+
+make_archive(
+    f"dist-{HEAP_VERSION_STR}-{system()}-{machine()}",
+    "zip",
+    f"heap-{HEAP_VERSION_STR}-{system()}-{machine()}",
+)
+
+rmtree(f"dist-{HEAP_VERSION_STR}-{system()}-{machine()}")
+
+print(
+    f'Out in "heap-{HEAP_VERSION_STR}-{system()}-{machine()}.zip", bin file in "dist/cli.bin"'
+)

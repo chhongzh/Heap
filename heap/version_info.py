@@ -1,2 +1,2 @@
 HEAP_VERSION = (1, 5, 1)
-HEAP_VERSION_STR = ".".join(HEAP_VERSION)
+HEAP_VERSION_STR = ".".join(map(str, HEAP_VERSION))
