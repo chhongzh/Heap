@@ -8,6 +8,7 @@ from os import chdir, rename, name
 print("准备构建")
 
 rmtree("dist", ignore_errors=True)
+rmtree(f"dist-{name}", ignore_errors=True)
 
 run([executable, "-m", "nuitka", "cli.py", "--standalone"])
 rename("cli.dist", "dist")
