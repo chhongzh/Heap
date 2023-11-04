@@ -72,7 +72,6 @@ class Runner:
         elif isinstance(node, Print):
             hook._print(self.try_pop(father))
         elif isinstance(node, Call):
-            print(node.__repr__())
             self.call(node, father)
         elif isinstance(node, While):
             self.expr_while(node, father)

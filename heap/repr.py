@@ -36,7 +36,7 @@ def repr() -> None:
 
     from heap.error import InputError
 
-    print("Heap Lang")
+    print("Heap Lang V1.5")
     ln = 1  # 当前行数
 
     old = getcwd()
@@ -69,12 +69,15 @@ def repr() -> None:
             # 退出
             break
 
+        hook._raise_error = print_and_stop
+
         l = Lexer(code)
-        toks = l.lex()
+        try:
+            toks = l.lex()
+        except CatchError:
+            continue
 
         b = Builder(toks)
-
-        hook._raise_error = print_and_stop
 
         try:
             ast_tree = b.parse()

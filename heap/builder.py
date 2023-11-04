@@ -37,6 +37,7 @@ class Builder:
         self.pos = -1
         self.tok = None
         self.root = []
+        self.will_raise_next = None
 
     def advance(self):
         """下一个token"""
@@ -166,7 +167,6 @@ class Builder:
             self.eat([ID])
 
             while self.tok.type not in (SEM, LINK):
-                print(self.tok)
                 if self.tok.type == REPLACE:
                     arg.append(Replace)
                 else:
@@ -358,7 +358,9 @@ class Builder:
             hook._raise_error(NotCloseTag("", self.pos))
 
         elif self.tok.type == OBJ:
-            hook._raise_error(ObjError(self.tok.value, self.pos))
+            hook._raise_error(
+                ObjError(self.tok.value, self.pos, "OBJ不能单独作为一行, 除非Link表达式")
+            )
 
     def check_none(self):
         if not self.tok:  # 保护

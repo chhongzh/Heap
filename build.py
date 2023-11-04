@@ -10,7 +10,7 @@ print("准备构建")
 rmtree("dist", ignore_errors=True)
 rmtree(f"dist-{name}", ignore_errors=True)
 
-run([executable, "-m", "nuitka", "cli.py", "--standalone"])
+run([executable, "-m", "nuitka", "cli.py", "--standalone", "--python-flag=nondebug"])
 rename("cli.dist", "dist")
 
 print("复制heap资源文件到目录")
