@@ -119,8 +119,9 @@ class Runner:
         root_value = self.expr_args([node.value], father)[0]
 
         for fn_name, fn_val in zip(node.call_chain, node.arg_chain):
-            value = self.call(Call(fn_name, [root_value, *fn_val]), father)
-            root_value = value
+            self.call(Call(fn_name, [root_value, *fn_val]), father)
+
+            root_value = father.stack.pop()
 
         if root_value:
             father.stack.append(root_value)  # 别忘了将最终结果返回去
@@ -321,7 +322,8 @@ class Runner:
         if not isinstance(func_obj, Func):
             value = func_obj(father, *args_list)  # 如果是Python Function
             if value:
-                return value
+                father.stack.append(value)
+            return
 
         args_dict = {}  # 解析数据
         for name, data in zip(func_obj.args, args_list):
