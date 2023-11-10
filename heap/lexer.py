@@ -79,7 +79,11 @@ class Lexer:
                     )
                 else:
                     self.tok.append(
-                        Token(ID, val, MetaInfo(start_pos, start_pos + len(val)))
+                        Token(
+                            ID,
+                            val,
+                            MetaInfo(start_pos, start_pos + len(val) if val else 0),
+                        )
                     )
             else:
                 self.advance()
