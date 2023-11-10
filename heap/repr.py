@@ -20,7 +20,7 @@ class CatchError(Exception):
 
 
 def _print(value):
-    "输出并缓存到BUFFER"
+    """输出并缓存到BUFFER"""
 
     global PRINT_BUFFER
     PRINT_BUFFER.append(value)
@@ -28,7 +28,7 @@ def _print(value):
 
 
 def print_and_stop(error):
-    "输出并抛出错误"
+    """输出并抛出错误"""
 
     print_error(error)
 
@@ -36,7 +36,7 @@ def print_and_stop(error):
 
 
 def heap_repr() -> None:
-    "Heap repr主函数"
+    """Heap repr主函数"""
 
     print(f"Heap Lang V{HEAP_VERSION_STR}")
     ln = 1  # 当前行数
