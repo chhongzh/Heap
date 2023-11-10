@@ -13,6 +13,10 @@ LIBS = {
     "random": "_random",
     "terminal": "_terminal",
     "string": "_string",
+    "mapping": "_mapping",
+    "file": "_file",
+    "weblib": "_weblib",
+    "json": "_json",
 }
 HEAP_LIBS = {
     "functionic": "functionic.heap",

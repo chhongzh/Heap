@@ -31,3 +31,7 @@ def replace_count(father: Root | Func, val: str, old: str, new: str, count: int)
 
 def count(father: Root | Func, val: str, o: str):
     return val.count(o)
+
+
+def decode(father: Root | Func, val: bytes, encoding: str):
+    return val.decode(encoding)
