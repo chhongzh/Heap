@@ -1,0 +1,21 @@
+include "mapping";
+include "file";
+include "weblib";
+include "string";
+include "json";
+
+web_get "https://api.bilibili.com/x/relation/stat?vmid=402625648&jsonp=jsonp"; #请求网址
+
+$->fileio_read -> decode "utf-8"; # 获取返回的数据, 并且解码
+
+$ -> from_json; # 把json转换成mapping
+
+$ -> get_key "data" -> get_key "follower"; # 读取返回的json数据
+
+push "chhongzh现在有:";
+print;
+
+print;
+
+push "个粉丝!\n";
+print;
