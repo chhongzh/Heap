@@ -1,11 +1,12 @@
-# Random (随机)
+# System
 
 这是一个Heap标准库, 由Python语言编写
 
-支持随机
+提供一些系统函数.
 
 ## Funcs
-- [randint](func/randint.md)
+- [exec](func/exec.md)
+
 
 ## Vars
 - 没有定义任何变量捏~

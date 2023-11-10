@@ -4,7 +4,9 @@
 
 ## 用法
 
-```arraypop <list>;```
+```
+array_pop <list>;
+```
 
 ## 返回值
 

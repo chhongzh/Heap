@@ -1,11 +1,12 @@
-# Random (随机)
+# Weblib
 
 这是一个Heap标准库, 由Python语言编写
 
-支持随机
+提供一些基本网络操作.
 
 ## Funcs
-- [randint](func/randint.md)
+- [web_get](func/web_get.md)
+
 
 ## Vars
 - 没有定义任何变量捏~

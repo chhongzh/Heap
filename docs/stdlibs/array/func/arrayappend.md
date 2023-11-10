@@ -5,7 +5,7 @@
 ## 用法
 
 ```
-arrayappend <list> <int | str | float | None>;
+array_append <list> <int | str | float | None>;
 ```
 
 ## 返回值

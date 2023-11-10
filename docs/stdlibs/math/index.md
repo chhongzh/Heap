@@ -2,6 +2,8 @@
 
 这是一个Heap标准库, 由Python语言编写. 底层由C语言编写.
 
+数学支持库.
+
 ## Funcs
 - [getpi](func/getpi.md)
 - [sqrt](func/sqrt.md)
