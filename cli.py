@@ -13,6 +13,7 @@ import click
 from heap import Lexer, Builder, Runner
 from heap.repr import heap_repr
 from heap.loader import loader
+
 from heap.log import HEAP_IO
 
 
@@ -50,3 +51,6 @@ def run(filepath, showlog, args):
 def repr():  # pylint:disable=W0622
     """REPR环境"""
     heap_repr()
+
+
+__wrapper()
