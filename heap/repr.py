@@ -10,9 +10,12 @@ from heap import hook
 from heap.eprint import print_error
 from heap.error import InputError
 from heap.version_info import HEAP_VERSION_STR
+from heap.log import info
 
 
-PRINT_BUFFER = []
+NEED_PRINT_NEW_LINE = False
+info("[REPR]: Repr mode is on.")
+info("[REPR]: Inject and hook the function.")
 
 
 class CatchError(Exception):
@@ -22,8 +25,8 @@ class CatchError(Exception):
 def _print(value):
     """输出并缓存到BUFFER"""
 
-    global PRINT_BUFFER
-    PRINT_BUFFER.append(value)
+    global NEED_PRINT_NEW_LINE
+    NEED_PRINT_NEW_LINE = str(value)[-1] != "\n"
     print(value, end="")
 
 
@@ -38,7 +41,10 @@ def print_and_stop(error):
 def heap_repr() -> None:
     """Heap repr主函数"""
 
+    info("[REPR]: OK to init. Ready for input.")
+
     print(f"Heap Lang V{HEAP_VERSION_STR}")
+    print('Type "exit;" to exit. "help;" to watch help.')
     ln = 1  # 当前行数
 
     old = getcwd()
@@ -67,7 +73,7 @@ def heap_repr() -> None:
             continue
 
         ln += 1
-        if code == "exit":
+        if code == "exit;":
             # 退出
             break
 
@@ -97,10 +103,8 @@ def heap_repr() -> None:
         r.run()
 
         # 自动换行:
-        if len(PRINT_BUFFER) > 0 and str(PRINT_BUFFER[-1])[-1] != "\n":
-            print("")
-
-        del PRINT_BUFFER[:]  # 释放
+        if NEED_PRINT_NEW_LINE:
+            print()
 
         print(">", ast_tree.stack)  # 输出
 
