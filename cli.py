@@ -14,6 +14,7 @@ from heap import Lexer, Builder, Runner
 from heap.repr import heap_repr
 from heap.loader import loader
 from heap.cppheap.emitter import Emitter
+from heap.log import HEAP_IO
 
 
 @click.group()
@@ -23,8 +24,9 @@ def __wrapper():
 
 @__wrapper.command()
 @click.argument("filepath", type=click.Path(exists=True))
+@click.option("--showlog", default=False, is_flag=True)
 @click.argument("args", nargs=-1)
-def run(filepath, args):
+def run(filepath, showlog, args):
     """
     运行Heap程序
     """
@@ -40,6 +42,9 @@ def run(filepath, args):
     r = Runner(root, dirname(filepath))
     r.root.var_ctx["heap_argv"] = args
     r.run()
+
+    if showlog:
+        print(HEAP_IO.getvalue(), end="")
 
 
 @__wrapper.command()
