@@ -5,7 +5,8 @@
 支持随机
 
 ## Funcs
-- [randint](func/randint.md)
+- [random_randint](func/random_randint.md)
+- [random_choice](func/random_choice.md)
 
 ## Vars
 - 没有定义任何变量捏~
