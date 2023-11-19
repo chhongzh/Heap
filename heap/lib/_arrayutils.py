@@ -1,4 +1,4 @@
-from heap.asts import Root, Func
+from ..asts import Root, Func
 
 
 def array(father: Func | Root):

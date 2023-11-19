@@ -11,6 +11,7 @@ from .types import OBJ, ID, KEYWORD, LINK
 from .keywords import KEYWORDS
 from . import hook
 from .error import LexerError
+from .log import info
 
 
 class Lexer:
@@ -21,6 +22,8 @@ class Lexer:
         self.pos = -1
         self.current = None
         self.tok = []
+
+        info("[Lexer]: 就绪")
 
     def advance(self):
         """下一个字符"""
@@ -33,6 +36,8 @@ class Lexer:
 
     def lex(self):
         """分词"""
+
+        info("[Lexer]: 开始分词")
 
         self.advance()
 
@@ -87,6 +92,8 @@ class Lexer:
                     )
             else:
                 self.advance()
+
+        info(f"[Lexer]: 分词完成 (Toks cnt:{len(self.tok)})")
 
         return self.tok
 

@@ -30,6 +30,7 @@ from .asts import (
 from .types import LINK, OBJ, SEM, KEYWORD, REPLACE, ID, COLON
 from . import hook
 from .error import NotCloseTag, ObjError, SyntaxErr
+from .log import info
 
 
 class Builder:
@@ -39,6 +40,8 @@ class Builder:
         self.tok = None
         self.root = []
         self.will_raise_next = None
+
+        info("[Builder]: 就绪")
 
     def advance(self):
         """下一个token"""
@@ -63,9 +66,11 @@ class Builder:
 
     def parse(self):
         """构建Heap AST"""
+        info("[Builder]: 开始构建")
         self.advance()
         while self.tok:
             self.root.append(self.expr())
+        info("[Builder]: 构建结束")
         return Root(self.root)
 
     def expr(self):

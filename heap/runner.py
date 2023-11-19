@@ -9,7 +9,8 @@ Heap的运行器,
 import sys
 from importlib import import_module
 from inspect import isfunction
-from os.path import exists, dirname, join, split
+from os.path import exists, dirname, join, split, isfile, isdir
+from .log import info, debug, critical, error
 
 from .error import BuilderErr, CallErr, IncludeError, NotDefine
 from .asts import (
@@ -56,17 +57,22 @@ class Runner:
         self.include_path = [path]
 
         self.load_module("builtin", self.root)  # 注入内建库
+        self.load_module("_py_builtin", self.root)  # 注入内建库
 
         self.root.runner = self  # 注入自己
 
         # 魔法变量:
         self.root.var_ctx["heap_excutable"] = sys.executable
-        self.root.var_ctx["heap_argv"] = sys.argv[3:]
+        self.root.var_ctx["heap_argv"] = []
+
+        info("[Runner]: 就绪")
 
     def run(self):
         """运行"""
 
+        info("[Runner]: 开始运行")
         self.visits(self.root.body, self.root)
+        info("[Runner]: 结束运行")
 
     def visit(self, node, father: Root | Func):
         """解析一个Node"""
@@ -91,7 +97,9 @@ class Runner:
         elif isinstance(node, While):
             self.expr_while(node, father)
         elif isinstance(node, Return):
-            return self.expr_args(node.vals, father)
+            dt = self.expr_args(node.vals, father)
+            info(f"[Runner]: 返回值:({dt})")
+            return dt
         elif isinstance(node, Sub):
             b, a = self.try_pop(father), self.try_pop(father)
             father.stack.append(a - b)
@@ -114,7 +122,9 @@ class Runner:
             self.expr_link(node, father)
 
     def expr_link(self, node: LinkExpr, father: Root | Func):
-        "解析Link语句"
+        """解析Link语句"""
+
+        info("[Runner]: 准备匹配link-expr表达式")
 
         root_value = self.expr_args([node.value], father)[0]
 
@@ -122,24 +132,33 @@ class Runner:
             self.call(Call(fn_name, [root_value, *fn_val]), father)
 
             root_value = father.stack.pop()
+            info(f"[Runner]: 结果:{repr(root_value)[0:5]}...")
 
         if root_value:
             father.stack.append(root_value)  # 别忘了将最终结果返回去
 
     def load_module(self, path: str, father: Func | Root):
         """加载一个模块"""
+
+        info(f"[Runner]: 加载模块:{path}")
+
         if path in LIBS:  # 对于是Python文件的模块
-            md = import_module(f".lib.{LIBS[path]}", "heap")
-            for name in dir(md):
+            info("[Runner]: [Heap-Bridge]: 导入来自Python的模块")
+
+            module = import_module(f".lib.{LIBS[path]}", "heap")
+            for name in dir(module):
                 if (
                     not name.startswith("__")
                     and not name.endswith("__")
-                    and isfunction(md.__dict__[name])
+                    and isfunction(module.__dict__[name])
                 ):
-                    father.fn_ctx[name] = md.__dict__[name]
+                    info(f"[Runner]: [Heap-Bridge]: 注册函数: Name:{name}")
+                    father.fn_ctx[name] = module.__dict__[name]
             return
         if path in HEAP_LIBS:  # 对于是Heap文件的模块
-            content = loader(join(split(__file__)[0], "lib", HEAP_LIBS[path]))
+            file_path = join(split(__file__)[0], "lib", HEAP_LIBS[path])
+
+            content = loader(file_path)
             lexer = Lexer(content)
             toks = lexer.lex()
 
@@ -151,8 +170,10 @@ class Runner:
 
         path = join(self.include_path[-1], path)
         self.include_path.append(dirname(path))  # 将解析目录加入到栈
+        info(f"[Runner]: 尝试打开{path}")
 
-        if not exists(path):
+        if isdir(path) or not isfile(path):
+            error("[Runner]: 路径不正确")
             hook.raise_error(IncludeError(path, -1, "Not a file."))
             return
 
@@ -169,6 +190,7 @@ class Runner:
     def expr_args(self, args: list, father: Func | Root, delete=True):
         """解析函数参数"""
 
+        info(f"[Runner]: 准备解析参数. Count:{len(args)}")
         replace_count = args.count(Replace)
         replace_args = father.stack[len(father.stack) - replace_count :]
         idx = 0
@@ -320,8 +342,8 @@ class Runner:
         func_obj = father.fn_ctx[node.name]
 
         if not isinstance(func_obj, Func):
-            value = func_obj(father, *args_list)  # 如果是Python Function
-            if value:
+            value = func_obj.__call__(father, *args_list)  # 如果是Python Function
+            if value != None:
                 father.stack.append(value)
             return
 
@@ -330,10 +352,12 @@ class Runner:
             args_dict[name] = data
         func_obj.var_ctx = args_dict.copy()  # 参数
         func_obj.fn_ctx = father.fn_ctx  # 递归
+        func_obj.stack.clear()  # 清空stack
 
         value = self.visits(func_obj.body, func_obj)
         if value:  # 有返回值
             value.reverse()
+            info(f"[Runner]: 调用函数:{node.name}, 返回:{value}")
             father.stack += value
 
     def visits(self, items: list, father: Func | Root):

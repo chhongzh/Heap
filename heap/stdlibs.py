@@ -17,6 +17,8 @@ LIBS = {
     "file": "_file",
     "weblib": "_weblib",
     "json": "_json",
+    "_hello": "_hello",
+    "_py_builtin": "_builtin",
 }
 HEAP_LIBS = {
     "functionic": "functionic.heap",

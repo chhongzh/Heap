@@ -6,7 +6,7 @@ chhongzh @ 2023.8.10
 """
 
 import math
-from heap.asts import Root, Func
+from ..asts import Root, Func
 
 
 def getpi(father: Root | Func):

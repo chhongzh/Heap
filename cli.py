@@ -13,7 +13,6 @@ import click
 from heap import Lexer, Builder, Runner
 from heap.repr import heap_repr
 from heap.loader import loader
-from heap.cppheap.emitter import Emitter
 from heap.log import HEAP_IO
 
 
@@ -51,28 +50,3 @@ def run(filepath, showlog, args):
 def repr():  # pylint:disable=W0622
     """REPR环境"""
     heap_repr()
-
-
-@__wrapper.command()
-@click.argument("filepath", type=click.Path(exists=False))
-@click.argument("output")
-def cppheap(filepath, output):
-    """转译heap源代码"""
-
-    body = loader(filepath)
-
-    l = Lexer(body)
-    lex = l.lex()
-
-    b = Builder(lex)
-    r = b.parse()
-
-    e = Emitter(r)
-
-    a = e.emit()
-
-    with open(output, "w", encoding="utf-8") as f:
-        f.writelines(a)
-
-
-__wrapper()

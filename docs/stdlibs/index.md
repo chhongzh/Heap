@@ -2,6 +2,7 @@
 
 所有Heap语言的标准库
 
+* [_hello](_hello/index.md)
 * [builtin](builtin/index.md)
 * [array](array/index.md)
 * [random](random/index.md)
