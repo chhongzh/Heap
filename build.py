@@ -30,15 +30,13 @@ except:
 
 chdir("../")
 
-rename("dist", f"dist-{HEAP_VERSION_STR}-{system()}-{machine()}")
-
 make_archive(
     f"dist-{HEAP_VERSION_STR}-{system()}-{machine()}",
     "zip",
-    f"heap-{HEAP_VERSION_STR}-{system()}-{machine()}",
+    f"dist",
 )
 
-# rmtree(f"dist-{HEAP_VERSION_STR}-{system()}-{machine()}")
+rmtree(f"dist")
 
 print(
     f'Out in "heap-{HEAP_VERSION_STR}-{system()}-{machine()}.zip", bin file in "dist/cli.bin"'
