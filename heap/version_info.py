@@ -4,5 +4,5 @@
 这个模块存储了一些常量, 关于Heap的版本信息等
 
 """
-HEAP_VERSION = (1, 5, 1)  # 使用元组存储的信息
+HEAP_VERSION = (1, 5, 2)  # 使用元组存储的信息
 HEAP_VERSION_STR = ".".join(map(str, HEAP_VERSION))
