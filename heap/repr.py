@@ -105,6 +105,7 @@ def heap_repr() -> None:
         # 自动换行:
         if NEED_PRINT_NEW_LINE:
             print()
+            NEED_PRINT_NEW_LINE = False  # 释放
 
         print(">", ast_tree.stack)  # 输出
 
