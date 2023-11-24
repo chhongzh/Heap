@@ -7,10 +7,10 @@ Heap的Lexer
 
 from .ops import OPS
 from .token import MetaInfo, Token
-from .types import OBJ, ID, KEYWORD, LINK
+from .types import EQUAL, OBJ, ID, KEYWORD, LINK
 from .keywords import KEYWORDS
 from . import hook
-from .error import LexerError
+from .error import LexerError, SyntaxErr
 from .log import info
 
 
@@ -22,6 +22,12 @@ class Lexer:
         self.pos = -1
         self.current = None
         self.tok = []
+
+        self.id_range = [
+            *list("abcdefghijklmnopqrstuvwxyz"),
+            *list("abcdefghijklmnopqrstuvwxyz".upper()),
+            *list("1234567890_"),
+        ]
 
         info("[Lexer]: 就绪")
 
@@ -90,12 +96,33 @@ class Lexer:
                             MetaInfo(start_pos, start_pos + len(val) if val else 0),
                         )
                     )
+            elif self.current == "=":
+                self.tok.append(self.match_equal())
             else:
                 self.advance()
 
         info(f"[Lexer]: 分词完成 (Toks cnt:{len(self.tok)})")
 
         return self.tok
+
+    def match_equal(self):
+        buf = []
+        equal_tok = ["=", "<", ">", "!"]
+
+        while self.current in equal_tok:
+            buf.append(self.current)
+            self.advance()
+
+        if len(buf) not in (1, 2):
+            hook.print_error(SyntaxErr(f'未知的"="语法定义.', self.pos))
+
+        if len(buf) == 1:
+            tok = buf[0]
+
+            if tok == "=":
+                return Token(EQUAL, "=", MetaInfo(self.pos, self.pos))
+            else:
+                hook.print_error(SyntaxErr(f"", -1))
 
     def string_match(self):
         "匹配字符串"
@@ -177,7 +204,7 @@ class Lexer:
 
         cache = []
         while self.current:
-            if self.current in OPS or self.current in (" ", "\n"):
+            if self.current not in self.id_range:
                 break
 
             cache.append(self.current)

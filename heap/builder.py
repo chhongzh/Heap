@@ -27,7 +27,7 @@ from .asts import (
     Input,
     While,
 )
-from .types import LINK, OBJ, SEM, KEYWORD, REPLACE, ID, COLON
+from .types import EQUAL, LINK, OBJ, SEM, KEYWORD, REPLACE, ID, COLON
 from . import hook
 from .error import NotCloseTag, ObjError, SyntaxErr
 from .log import info
@@ -154,6 +154,10 @@ class Builder:
 
                     return None
         elif self.tok.type == ID:
+            next_tok = self.toks[self.pos + 1]
+            next_tok: Token
+            if next_tok.type == EQUAL:
+                return self.match_assignment()
             return self.match_call()
 
         elif self.tok.type in (OBJ, REPLACE):
@@ -166,6 +170,20 @@ class Builder:
         self.advance()
 
         return None
+
+    def match_assignment(self):
+        name = self.tok.value
+        self.eat([ID])
+
+        self.eat([EQUAL])
+
+        value = self.tok.value if self.tok.type != REPLACE else Replace
+
+        self.eat([OBJ, REPLACE])
+
+        self.eat([SEM])
+
+        return Set(name, value)
 
     def match_link(self):
         """捕捉Match Link"""
