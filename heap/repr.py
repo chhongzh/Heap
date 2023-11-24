@@ -43,6 +43,8 @@ def heap_repr() -> None:
 
     info("[REPR]: OK to init. Ready for input.")
 
+    NEED_PRINT_NEW_LINE = False
+
     print(f"Heap Lang V{HEAP_VERSION_STR}")
     print('Type "exit;" to exit. "help;" to watch help.')
     ln = 1  # 当前行数
