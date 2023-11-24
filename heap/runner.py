@@ -350,11 +350,29 @@ class Runner:
         args_dict = {}  # 解析数据
         for name, data in zip(func_obj.args, args_list):
             args_dict[name] = data
-        func_obj.var_ctx = args_dict.copy()  # 参数
+
+        func_obj.var_ctx.clear()  # 清除所有的记录
+        return_var_name = []  # 记录返回之后的变量
+
+        # 传入了参数但是全局变量没有传入
+
+        for var_name in father.var_ctx:
+            var_name: str
+            if var_name.isupper():
+                func_obj.var_ctx = father.var_ctx[var_name]
+                return_var_name.append(var_name)
+
+        func_obj.var_ctx = {**father.var_ctx, **args_dict.copy()}  # 参数
+
         func_obj.fn_ctx = father.fn_ctx  # 递归
         func_obj.stack.clear()  # 清空stack
 
         value = self.visits(func_obj.body, func_obj)
+
+        info("[Runner]: 存储全局")
+        for var_name in return_var_name:
+            father.var_ctx[var_name] = func_obj.var_ctx[var_name]
+
         if value:  # 有返回值
             value.reverse()
             info(f"[Runner]: 调用函数:{node.name}, 返回:{value}")
