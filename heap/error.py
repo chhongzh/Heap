@@ -63,6 +63,10 @@ class BuilderErr(Error):
     pass
 
 
+class PopFromEmptyStack(Error):
+    pass
+
+
 ERRDICT = {
     "BaseError": BaseError,
     "Error": Error,
@@ -75,4 +79,5 @@ ERRDICT = {
     "SyntaxErr": SyntaxErr,
     "CallError": CallErr,
     "BuilderErr": BuilderErr,
+    "PopFromEmptyStack": PopFromEmptyStack,
 }

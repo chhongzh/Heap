@@ -4,7 +4,7 @@
 """"Heap的钩子"""
 
 import sys
-from .eprint import print_error
+from .error_printer import print_error
 
 
 def print_val(val):

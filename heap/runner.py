@@ -12,7 +12,14 @@ from inspect import isfunction
 from os.path import exists, dirname, join, split, isfile, isdir
 from .log import info, debug, critical, error
 
-from .error import BuilderErr, CallErr, IncludeError, NotDefine
+from .error import (
+    BaseError,
+    BuilderErr,
+    CallErr,
+    IncludeError,
+    NotDefine,
+    PopFromEmptyStack,
+)
 from .asts import (
     Div,
     Input,
@@ -55,15 +62,17 @@ class Runner:
 
         self.root = root
         self.include_path = [path]
+        # Running Blobk - 记录当前块
+        self.running_blobk = []
 
         self.load_module("builtin", self.root)  # 注入内建库
         self.load_module("_py_builtin", self.root)  # 注入内建库
 
-        self.root.runner = self  # 注入自己
-
         # 魔法变量:
         self.root.var_ctx["heap_excutable"] = sys.executable
         self.root.var_ctx["heap_argv"] = []
+
+        self.root.runner = self  # 注入自己
 
         info("[Runner]: 就绪")
 
@@ -76,6 +85,10 @@ class Runner:
 
     def visit(self, node, father: Root | Func):
         """解析一个Node"""
+
+        # 添加到Running_Blobk
+        self.running_blobk.append(node.__class__.__name__)
+
         if isinstance(node, Func):
             father.fn_ctx[node.name] = node
         elif isinstance(node, Input):
@@ -85,7 +98,9 @@ class Runner:
         elif isinstance(node, Set):
             father.var_ctx[node.name] = self.expr_args([node.val], father)[0]
         elif isinstance(node, Get):
-            father.stack.append(father.var_ctx[node.name])
+            self.running_blobk[-1] = f'Get "{node.name}"'
+
+            self.expr_get(node, father)
         elif isinstance(node, Push):
             father.stack.append(node.val)
         elif isinstance(node, Pop):
@@ -93,12 +108,18 @@ class Runner:
         elif isinstance(node, Print):
             hook.print_val(self.try_pop(father))
         elif isinstance(node, Call):
+            self.running_blobk[-1] = f'Calling "{node.name}"'
+
             self.call(node, father)
         elif isinstance(node, While):
             self.expr_while(node, father)
         elif isinstance(node, Return):
             dt = self.expr_args(node.vals, father)
             info(f"[Runner]: 返回值:({dt})")
+
+            # 别忘记在Return 之前删除
+            self.running_blobk.pop()
+
             return dt
         elif isinstance(node, Sub):
             b, a = self.try_pop(father), self.try_pop(father)
@@ -120,6 +141,13 @@ class Runner:
             self.expr_iter(node, father)
         elif isinstance(node, LinkExpr):
             self.expr_link(node, father)
+
+        self.running_blobk.pop()
+
+    def expr_get(self, node: Get, father: Root | Func):
+        if node.name not in father.var_ctx.keys():
+            self.hook_raise_error(NotDefine(f"变量:{node.name}, 并未创建, 但却被访问了", -1))
+        father.stack.append(father.var_ctx[node.name])
 
     def expr_link(self, node: LinkExpr, father: Root | Func):
         """解析Link语句"""
@@ -174,7 +202,7 @@ class Runner:
 
         if isdir(path) or not isfile(path):
             error("[Runner]: 路径不正确")
-            hook.raise_error(IncludeError(path, -1, "Not a file."))
+            self.hook_raise_error(IncludeError(path, -1, "Not a file."))
             return
 
         content = loader(path)
@@ -336,7 +364,7 @@ class Runner:
 
         # 查找函数对象
         if node.name not in father.fn_ctx:
-            hook.raise_error(NotDefine(node.name, -1))
+            self.hook_raise_error(NotDefine(node.name, -1))
             return
 
         func_obj = father.fn_ctx[node.name]
@@ -386,12 +414,14 @@ class Runner:
             if val:  # 处理返回值
                 return val
 
-    def try_pop(self, father: Root | Func):
+    def try_pop(self, father: Root | Func, raise_err: bool = True):
         "尝试获取一个堆栈数据"
 
         try:
             return father.stack.pop()
         except IndexError:
+            if raise_err:
+                self.hook_raise_error(PopFromEmptyStack("尝试从空栈中获取数据.", -1))
             return None
 
     def expr_iter(self, node: Iter, father: Root | Func):
@@ -404,3 +434,9 @@ class Runner:
         for i in val:
             father.var_ctx[iter_name] = i  # Bound the varibles
             self.visits(node.body, father)  # 调用代码
+
+    def hook_raise_error(self, error: BaseError):
+        print("Traceback: On running code, but error was generated.")
+        for name in self.running_blobk:
+            print(f"At Statement:{name}")
+        hook.raise_error(error)

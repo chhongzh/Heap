@@ -191,7 +191,10 @@ class Lexer:
 
             self.advance()
         if "." in cache:
-            return float("".join(cache))
+            try:
+                return float("".join(cache))
+            except:
+                hook.raise_error(LexerError("未知的float.", self.pos, "".join(cache)))
         return int("".join(cache))
 
     def isdot(self):

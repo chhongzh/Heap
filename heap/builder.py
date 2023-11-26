@@ -154,17 +154,16 @@ class Builder:
 
                     return None
         elif self.tok.type == ID:
-            next_tok = self.toks[self.pos + 1]
-            next_tok: Token
-            if next_tok.type == EQUAL:
-                return self.match_assignment()
+            has_next_tok = (len(self.toks) - self.pos) > 1
+            if has_next_tok:
+                next_tok = self.toks[self.pos + 1]
+                next_tok: Token
+                if next_tok.type == EQUAL:
+                    return self.match_assignment()
             return self.match_call()
 
-        elif self.tok.type in (OBJ, REPLACE):
-            if self.toks[self.pos + 1].type == LINK:
-                return self.match_link()
-
-            return None
+        elif self.tok.type in (OBJ, REPLACE) and self.toks[self.pos + 1].type == LINK:
+            return self.match_link()
 
         self.catch_error()  # 捕捉错误(无法识别的tok)
         self.advance()

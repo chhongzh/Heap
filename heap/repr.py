@@ -7,7 +7,7 @@
 from os import getcwd
 from heap import Lexer, Builder, Runner
 from heap import hook
-from heap.eprint import print_error
+from heap.error_printer import print_error
 from heap.error import InputError
 from heap.version_info import HEAP_VERSION_STR
 from heap.log import info
@@ -94,15 +94,18 @@ def heap_repr() -> None:
         except CatchError:
             continue
 
-        hook.raise_error = print_error
-
         ast_tree.stack = stack  # 上下文
         ast_tree.fn_ctx = fn_ctx  # 上下文
         ast_tree.var_ctx = var_ctx  # 上下文
         ast_tree.command = command  # 上下文
 
         r = Runner(ast_tree, old)
-        r.run()
+        try:
+            r.run()
+        except CatchError:
+            continue
+
+        hook.raise_error = print_error
 
         # 自动换行:
         if NEED_PRINT_NEW_LINE:
