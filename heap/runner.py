@@ -438,5 +438,5 @@ class Runner:
     def hook_raise_error(self, error: BaseError):
         print("Traceback: On running code, but error was generated.")
         for name in self.running_blobk:
-            print(f"At Statement:{name}")
+            print(f"  At Statement:{name}")
         hook.raise_error(error)
