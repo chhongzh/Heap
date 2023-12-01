@@ -5,12 +5,12 @@
 """Heap repr"""
 
 from os import getcwd
-from heap import Lexer, Builder, Runner
-from heap import hook
-from heap.error_printer import print_error
-from heap.error import InputError
-from heap.version_info import HEAP_VERSION_STR
-from heap.log import info
+from . import Lexer, Builder, Runner, multiline_input
+from . import hook
+from .error_printer import print_error
+from .error import InputError
+from .version_info import HEAP_VERSION_STR
+from .log import info
 
 
 NEED_PRINT_NEW_LINE = False
@@ -43,10 +43,10 @@ def heap_repr() -> None:
 
     info("[REPR]: OK to init. Ready for input.")
 
-    NEED_PRINT_NEW_LINE = False
+    global NEED_PRINT_NEW_LINE
 
     print(f"Heap Lang V{HEAP_VERSION_STR}")
-    print('Type "exit;" to exit. "help;" to watch help.')
+    print('输入 "exit;" 来退出. "help;" 来查看帮助. "\'" 启用多行输入(再次输入则关闭多行输入).')
     ln = 1  # 当前行数
 
     old = getcwd()
@@ -78,6 +78,9 @@ def heap_repr() -> None:
         if code == "exit;":
             # 退出
             break
+        elif code == "'":
+            # 多行输入模式:
+            code = "\n".join(multiline_input.multiline_input())
 
         hook.raise_error = print_and_stop
 

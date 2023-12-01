@@ -25,6 +25,7 @@ from .asts import (
     Input,
     LinkExpr,
     Mul,
+    Node,
     Pop,
     Root,
     Func,
@@ -52,7 +53,7 @@ from . import hook
 class Runner:
     """Heap 解析器"""
 
-    def __init__(self, root: Root, path: str):
+    def __init__(self, root: Root, path: str, need_inject_module=True):
         """
         传入一个Root节点, 并运行
 
@@ -65,8 +66,9 @@ class Runner:
         # Running Blobk - 记录当前块
         self.running_blobk = []
 
-        self.load_module("builtin", self.root)  # 注入内建库
-        self.load_module("_py_builtin", self.root)  # 注入内建库
+        if need_inject_module:
+            self.load_module("builtin", self.root)  # 注入内建库
+            self.load_module("_py_builtin", self.root)  # 注入内建库
 
         # 魔法变量:
         self.root.var_ctx["heap_excutable"] = sys.executable
@@ -112,7 +114,8 @@ class Runner:
 
             self.call(node, father)
         elif isinstance(node, While):
-            self.expr_while(node, father)
+            # While 也有可能会有返回值
+            return self.expr_while(node, father)
         elif isinstance(node, Return):
             dt = self.expr_args(node.vals, father)
             info(f"[Runner]: 返回值:({dt})")
@@ -134,11 +137,13 @@ class Runner:
             b, a = self.try_pop(father), self.try_pop(father)
             father.stack.append(a / b)
         elif isinstance(node, If):
-            self.expr_if(node, father)
+            # If可能会有返回值(return打断)
+            return self.expr_if(node, father)
         elif isinstance(node, Include):
             self.load_module(node.path, father)
         elif isinstance(node, Iter):
-            self.expr_iter(node, father)
+            # Return 打断
+            return self.expr_iter(node, father)
         elif isinstance(node, LinkExpr):
             self.expr_link(node, father)
 
@@ -244,6 +249,8 @@ class Runner:
         else:
             # if-else mode:
             if len(node.l1s) + 1 == len(node.bodys):
+                return_value = None
+
                 for l1, op, l2, body in zip(
                     node.l1s, node.ops, node.l2s, node.bodys[:-1]
                 ):
@@ -253,25 +260,28 @@ class Runner:
                     l2 = temp_data[2]
 
                     if op == "equal" and l1 == l2:
-                        self.visits(body, father)
-                        return
+                        return_value = self.visits(body, father)
+                        break
                     if op == "bigequal" and l1 >= l2:
-                        self.visits(body, father)
-                        return
+                        return_value = self.visits(body, father)
+                        break
                     if op == "small" and l1 < l2:
-                        self.visits(body, father)
-                        return
+                        return_value = self.visits(body, father)
+                        break
                     if op == "big" and l1 > l2:
-                        self.visits(body, father)
-                        return
+                        return_value = self.visits(body, father)
+                        break
                     if op == "smallequal" and l1 <= l2:
-                        self.visits(body, father)
-                        return
+                        return_value = self.visits(body, father)
+                        break
                     if op == "notequal" and l1 != l2:
-                        self.visits(body, father)
-                        return
+                        return_value = self.visits(body, father)
+                        break
 
-                self.visits(node.bodys[-1], father)
+                if return_value == None:
+                    return_value = self.visits(node.bodys[-1], father)
+
+                return return_value
 
             elif len(node.l1s) == len(node.bodys):
                 for l1, op, l2, body in zip(node.l1s, node.ops, node.l2s, node.bodys):
@@ -281,23 +291,22 @@ class Runner:
                     l2 = temp_data[2]
 
                     if op == "equal" and l1 == l2:
-                        self.visits(body, father)
-                        return
+                        return self.visits(body, father)
+
                     if op == "bigequal" and l1 >= l2:
-                        self.visits(body, father)
-                        return
+                        return self.visits(body, father)
+
                     if op == "small" and l1 < l2:
-                        self.visits(body, father)
-                        return
+                        return self.visits(body, father)
+
                     if op == "smallequal" and l1 <= l2:
-                        self.visits(body, father)
-                        return
+                        return self.visits(body, father)
+
                     if op == "notequal" and l1 != l2:
-                        self.visits(body, father)
-                        return
+                        return self.visits(body, father)
+
                     if op == "big" and l1 > l2:
-                        self.visits(body, father)
-                        return
+                        return self.visits(body, father)
 
                 self.visits(node.bodys[-1], father)
             else:
@@ -313,39 +322,57 @@ class Runner:
 
         if op == "notequal":
             while expr1 != expr2:
-                self.visits(node.body, father)
+                ret_val = self.visits(node.body, father)
+                if ret_val != None:
+                    return ret_val
+
                 temp = self.expr_args([node.expr1, node.expr2], father)
                 expr1 = temp[0]
                 expr2 = temp[1]
         elif op == "equal":
             while expr1 == expr2:
-                self.visits(node.body, father)
+                ret_val = self.visits(node.body, father)
+                if ret_val != None:
+                    return ret_val
+
                 temp = self.expr_args([node.expr1, node.expr2], father)
                 expr1 = temp[0]
                 expr2 = temp[1]
         elif op == "small":
             while expr1 < expr2:
-                self.visits(node.body, father)
+                ret_val = self.visits(node.body, father)
+                if ret_val != None:
+                    return ret_val
+
                 temp = self.expr_args([node.expr1, node.expr2], father)
                 expr1 = temp[0]
                 expr2 = temp[1]
         elif op == "smallequal":
             while expr1 <= expr2:
-                self.visits(node.body, father)
+                ret_val = self.visits(node.body, father)
+                if ret_val != None:
+                    return ret_val
+
                 temp = self.expr_args([node.expr1, node.expr2], father)
                 expr1 = temp[0]
                 expr2 = temp[1]
 
         elif op == "bigequal":
             while expr1 >= expr2:
-                self.visits(node.body, father)
+                ret_val = self.visits(node.body, father)
+                if ret_val != None:
+                    return ret_val
+
                 temp = self.expr_args([node.expr1, node.expr2], father)
                 expr1 = temp[0]
                 expr2 = temp[1]
 
         elif op == "big":
             while expr1 > expr2:
-                self.visits(node.body, father)
+                ret_val = self.visits(node.body, father)
+                if ret_val != None:
+                    return ret_val
+
                 temp = self.expr_args([node.expr1, node.expr2], father)
                 expr1 = temp[0]
                 expr2 = temp[1]
@@ -370,7 +397,7 @@ class Runner:
         func_obj = father.fn_ctx[node.name]
 
         if not isinstance(func_obj, Func):
-            value = func_obj.__call__(father, *args_list)  # 如果是Python Function
+            value = func_obj(father, *args_list)  # 如果是Python Function
             if value != None:
                 father.stack.append(value)
             return
@@ -433,7 +460,10 @@ class Runner:
 
         for i in val:
             father.var_ctx[iter_name] = i  # Bound the varibles
-            self.visits(node.body, father)  # 调用代码
+            ret_val = self.visits(node.body, father)  # 调用代码
+
+            if ret_val != None:
+                return ret_val
 
     def hook_raise_error(self, error: BaseError):
         print("Traceback: On running code, but error was generated.")
