@@ -207,7 +207,9 @@ class Lexer:
 
         cache = []
         while self.current:
-            if self.current not in self.id_range:
+            if not ("\u4e00" <= self.current <= "\u9fff") and (
+                self.current not in self.id_range
+            ):
                 break
 
             cache.append(self.current)
