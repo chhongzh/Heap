@@ -308,7 +308,7 @@ class Runner:
                     if op == "big" and l1 > l2:
                         return self.visits(body, father)
 
-                self.visits(node.bodys[-1], father)
+                # self.visits(node.bodys[-1], father) : 修复错误, 这一行是多余的
             else:
                 hook.print_error(BuilderErr("", -1, "未知的错误"))
 
