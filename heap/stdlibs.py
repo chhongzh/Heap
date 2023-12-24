@@ -15,6 +15,7 @@ LIBS = {
     "string": "_string",
     "mapping": "_mapping",
     "file": "_file",
+    "io": "_io",
     "weblib": "_weblib",
     "json": "_json",
     "_hello": "_hello",
