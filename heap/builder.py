@@ -34,12 +34,13 @@ from .log import info
 
 
 class Builder:
-    def __init__(self, toks: list[Token]):
+    def __init__(self, toks: list[Token], file_path=None):
         self.toks = toks
         self.pos = -1
         self.tok = None
         self.root = []
         self.will_raise_next = None
+        self.file_path = file_path
 
         info("[Builder]: 就绪")
 
@@ -71,7 +72,7 @@ class Builder:
         while self.tok:
             self.root.append(self.expr())
         info("[Builder]: 构建结束")
-        return Root(self.root)
+        return Root(self.root, self.file_path)
 
     def expr(self):
         """解析一句表达式"""
