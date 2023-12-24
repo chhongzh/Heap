@@ -92,7 +92,8 @@ class Runner:
         self.running_blobk.append(node.__class__.__name__)
 
         if isinstance(node, Func):
-            father.fn_ctx[node.name] = node
+            self.running_blobk[-1] = f"Defining Func {node.name}"
+            father.var_ctx[node.name] = node
         elif isinstance(node, Input):
             father.stack.append(input(self.expr_args([node.val], father)[0]))
         elif isinstance(node, Command):
@@ -164,8 +165,11 @@ class Runner:
         for fn_name, fn_val in zip(node.call_chain, node.arg_chain):
             self.call(Call(fn_name, [root_value, *fn_val]), father)
 
-            root_value = father.stack.pop()
-            info(f"[Runner]: 结果:{repr(root_value)[0:5]}...")
+            if len(root_value) > 0:
+                root_value = father.stack.pop()
+                info(f"[Runner]: 结果:{repr(root_value)[0:5]}...")
+            else:
+                info(f"[Runner]: 没有返回值")
 
         if root_value:
             father.stack.append(root_value)  # 别忘了将最终结果返回去
@@ -186,7 +190,7 @@ class Runner:
                     and isfunction(module.__dict__[name])
                 ):
                     info(f"[Runner]: [Heap-Bridge]: 注册函数: Name:{name}")
-                    father.fn_ctx[name] = module.__dict__[name]
+                    father.var_ctx[name] = module.__dict__[name]
             return
         if path in HEAP_LIBS:  # 对于是Heap文件的模块
             file_path = join(split(__file__)[0], "lib", HEAP_LIBS[path])
@@ -260,28 +264,24 @@ class Runner:
                     l2 = temp_data[2]
 
                     if op == "equal" and l1 == l2:
-                        return_value = self.visits(body, father)
-                        break
+                        return self.visits(body, father)
+
                     if op == "bigequal" and l1 >= l2:
-                        return_value = self.visits(body, father)
-                        break
+                        return self.visits(body, father)
+
                     if op == "small" and l1 < l2:
-                        return_value = self.visits(body, father)
-                        break
+                        return self.visits(body, father)
+
                     if op == "big" and l1 > l2:
-                        return_value = self.visits(body, father)
-                        break
+                        return self.visits(body, father)
+
                     if op == "smallequal" and l1 <= l2:
-                        return_value = self.visits(body, father)
-                        break
+                        return self.visits(body, father)
+
                     if op == "notequal" and l1 != l2:
-                        return_value = self.visits(body, father)
-                        break
+                        return self.visits(body, father)
 
-                if return_value == None:
-                    return_value = self.visits(node.bodys[-1], father)
-
-                return return_value
+                    return self.visits(node.bodys[-1], father)
 
             elif len(node.l1s) == len(node.bodys):
                 for l1, op, l2, body in zip(node.l1s, node.ops, node.l2s, node.bodys):
@@ -390,13 +390,13 @@ class Runner:
         args_list = self.expr_args(node.args, father)
 
         # 查找函数对象
-        if node.name not in father.fn_ctx:
+        if node.name not in father.var_ctx:
             self.hook_raise_error(NotDefine(node.name, -1))
             return
 
-        func_obj = father.fn_ctx[node.name]
+        func_obj = father.var_ctx[node.name]
 
-        if not isinstance(func_obj, Func):
+        if isfunction(func_obj):
             value = func_obj(father, *args_list)  # 如果是Python Function
             if value != None:
                 father.stack.append(value)
@@ -419,7 +419,7 @@ class Runner:
 
         func_obj.var_ctx = {**father.var_ctx, **args_dict.copy()}  # 参数
 
-        func_obj.fn_ctx = father.fn_ctx  # 递归
+        func_obj.var_ctx = father.var_ctx  # 递归
         func_obj.stack.clear()  # 清空stack
 
         value = self.visits(func_obj.body, func_obj)
@@ -467,6 +467,7 @@ class Runner:
 
     def hook_raise_error(self, error: BaseError):
         print("Traceback: On running code, but error was generated.")
+        print(f'On file: "{self.root.file_path}"')
         for name in self.running_blobk:
             print(f"  At Statement:{name}")
         hook.raise_error(error)

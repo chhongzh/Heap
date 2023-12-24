@@ -56,7 +56,6 @@ def heap_repr() -> None:
 
     # 上下文数据
     stack = []
-    fn_ctx = {}
     var_ctx = {}
     command = {}
 
@@ -98,7 +97,6 @@ def heap_repr() -> None:
             continue
 
         ast_tree.stack = stack  # 上下文
-        ast_tree.fn_ctx = fn_ctx  # 上下文
         ast_tree.var_ctx = var_ctx  # 上下文
         ast_tree.command = command  # 上下文
 
