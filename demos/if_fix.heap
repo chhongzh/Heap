@@ -1,0 +1,15 @@
+# 针对于if的修复测试
+
+func 中文测试 expr:
+    get expr;
+    value = "没有进入到if";
+    if $ equal 1:
+        value ="进入了分支";
+    endif
+
+    get value;
+    return $;
+endfunc
+
+中文测试 0;
+print;
