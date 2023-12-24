@@ -7,7 +7,6 @@ Heap @ 2023
 
 你可以在https://github.com/chhongzh/Heap查看更多信息
 """
-from os.path import dirname
 import click
 
 from heap import Lexer, Builder, Runner
@@ -15,6 +14,7 @@ from heap.repr import heap_repr
 from heap.loader import loader
 
 from heap.log import HEAP_IO
+from os.path import dirname
 
 
 @click.group()
@@ -36,7 +36,7 @@ def run(filepath, showlog, args):
     l = Lexer(dt)
     toks = l.lex()
 
-    b = Builder(toks)
+    b = Builder(toks, filepath)
     root = b.parse()
 
     r = Runner(root, dirname(filepath))
