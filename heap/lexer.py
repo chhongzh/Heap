@@ -138,6 +138,12 @@ class Lexer:
                         cache.append("\t")
                     case '"':
                         cache.append('"')
+                    case "r":
+                        cache.append("\r")
+                    case "a":
+                        cache.append("\a")
+                    case "b":
+                        cache.append("\b")
                     case _:
                         hook.raise_error(
                             LexerError(f"\\{self.current}", self.pos, "未知的转义")
