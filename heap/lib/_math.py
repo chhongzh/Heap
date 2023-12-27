@@ -7,6 +7,7 @@ chhongzh @ 2023.8.10
 
 import math
 from ..asts import Root, Func
+from ..runner import Runner
 
 
 def getpi(father: Root | Func):
@@ -43,3 +44,7 @@ def fabs(father: Root | Func, val):
 
 def gcd(father: Root | Func, val, val1):
     father.stack.append(math.gcd(val, val1))
+
+
+def _heap_init(father: Root | Func):
+    father.var_ctx["math_pi"] = math.pi
