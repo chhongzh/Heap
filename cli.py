@@ -1,3 +1,4 @@
+#!python3
 # coding=utf-8
 
 """
@@ -16,7 +17,7 @@ from heap.version_info import HEAP_VERSION_STR
 
 try:
     from heap.compie_info import IS_COMPILE, COMPILE_DATE
-except ImportError:
+except ModuleNotFoundError:
     IS_COMPILE = False
     COMPILE_DATE = None
 

@@ -163,3 +163,5 @@ cli.build/
 # vscode file
 .vscode/
 .VSCodeCounter/
+
+heap/compile_info.py
