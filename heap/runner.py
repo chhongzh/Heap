@@ -425,7 +425,6 @@ class Runner:
 
         func_obj.var_ctx = {**father.var_ctx, **args_dict.copy()}  # 参数
 
-        func_obj.var_ctx = father.var_ctx  # 递归
         func_obj.stack.clear()  # 清空stack
 
         value = self.visits(func_obj.body, func_obj)
