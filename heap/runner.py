@@ -64,7 +64,7 @@ class Runner:
         self.root = root
         self.include_path = [path]
         # Running Blobk - 记录当前块
-        self.running_blobk = []
+        self.running_block = []
 
         if need_inject_module:
             self.load_module("builtin", self.root)  # 注入内建库
@@ -88,11 +88,11 @@ class Runner:
     def visit(self, node, father: Root | Func):
         """解析一个Node"""
 
-        # 添加到Running_Blobk
-        self.running_blobk.append(node.__class__.__name__)
+        # 添加到Running_Block
+        self.running_block.append(node.__class__.__name__)
 
         if isinstance(node, Func):
-            self.running_blobk[-1] = f"Defining Func {node.name}"
+            self.running_block[-1] = f"Defining Func {node.name}"
             father.var_ctx[node.name] = node
         elif isinstance(node, Input):
             father.stack.append(input(self.expr_args([node.val], father)[0]))
@@ -101,7 +101,7 @@ class Runner:
         elif isinstance(node, Set):
             father.var_ctx[node.name] = self.expr_args([node.val], father)[0]
         elif isinstance(node, Get):
-            self.running_blobk[-1] = f'Get "{node.name}"'
+            self.running_block[-1] = f'Get "{node.name}"'
 
             self.expr_get(node, father)
         elif isinstance(node, Push):
@@ -111,7 +111,7 @@ class Runner:
         elif isinstance(node, Print):
             hook.print_val(self.try_pop(father))
         elif isinstance(node, Call):
-            self.running_blobk[-1] = f'Calling "{node.name}"'
+            self.running_block[-1] = f'Calling "{node.name}"'
 
             self.call(node, father)
         elif isinstance(node, While):
@@ -122,7 +122,7 @@ class Runner:
             info(f"[Runner]: 返回值:({dt})")
 
             # 别忘记在Return 之前删除
-            self.running_blobk.pop()
+            self.running_block.pop()
 
             return dt
         elif isinstance(node, Sub):
@@ -148,7 +148,7 @@ class Runner:
         elif isinstance(node, LinkExpr):
             self.expr_link(node, father)
 
-        self.running_blobk.pop()
+        self.running_block.pop()
 
     def expr_get(self, node: Get, father: Root | Func):
         if node.name not in father.var_ctx.keys():
@@ -474,6 +474,6 @@ class Runner:
     def hook_raise_error(self, error: BaseError):
         print("Traceback: On running code, but error was generated.")
         print(f'On file: "{self.root.file_path}"')
-        for name in self.running_blobk:
+        for name in self.running_block:
             print(f"  At Statement:{name}")
         hook.raise_error(error)
