@@ -1,0 +1,35 @@
+# 99乘法表
+
+i = 0;
+get i;
+while $ small 9:
+    get i;
+    push 1;
+    add;
+    i=$;
+
+    j = 0;
+    get j;
+    get i;
+    while $ small $:
+        get j;push 1;add;j=$;   # 自增
+
+        get j;print;            # 输出j
+        push "*";print;         # 输出*
+        get i;print;            # 输出i
+        push "=";print;         # 输出=
+        get i;get j;mul;print;  # 输出结果
+        push " ";print;         # 输出空格
+
+
+        get j;
+        get i;
+
+    endwhile
+
+    push "\n";
+    print;
+
+    get i;
+
+endwhile
