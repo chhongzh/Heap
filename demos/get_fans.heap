@@ -1,12 +1,12 @@
 include "mapping";
-include "file";
 include "weblib";
 include "string";
 include "json";
+include "io";
 
-web_get "https://api.bilibili.com/x/relation/stat?vmid=402625648&jsonp=jsonp"; #请求网址
+weblib_get "https://api.bilibili.com/x/relation/stat?vmid=402625648&jsonp=jsonp"; #请求网址
 
-$->fileio_read -> decode "utf-8"; # 获取返回的数据, 并且解码
+$ -> io_read -> decode "utf-8"; # 获取返回的数据, 并且解码
 
 $ -> from_json; # 把json转换成mapping
 
