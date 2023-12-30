@@ -165,7 +165,7 @@ class Runner:
         for fn_name, fn_val in zip(node.call_chain, node.arg_chain):
             self.call(Call(fn_name, [root_value, *fn_val]), father)
 
-            if len(root_value) > 0:
+            if len(father.stack) > 0:
                 root_value = father.stack.pop()
                 info(f"[Runner]: 结果:{repr(root_value)[0:5]}...")
             else:
