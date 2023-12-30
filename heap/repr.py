@@ -89,7 +89,7 @@ def heap_repr() -> None:
         except CatchError:
             continue
 
-        b = Builder(toks)
+        b = Builder(toks, "stdin")
 
         try:
             ast_tree = b.parse()
