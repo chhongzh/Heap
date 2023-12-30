@@ -17,6 +17,7 @@ from .error import (
     BuilderErr,
     CallErr,
     IncludeError,
+    MissingArg,
     NotDefine,
     PopFromEmptyStack,
 )
@@ -403,6 +404,11 @@ class Runner:
         func_obj = father.var_ctx[node.name]
 
         if isfunction(func_obj):
+            # 调用前检查参数数量
+
+            if not self.check_func_cnt(func_obj, len(node.args)):
+                self.hook_raise_error(MissingArg(f"{node.name}", -1))
+
             value = func_obj(father, *args_list)  # 如果是Python Function
             if value != None:
                 father.stack.append(value)
@@ -445,6 +451,9 @@ class Runner:
             val = self.visit(item, father)
             if val:  # 处理返回值
                 return val
+
+    def check_func_cnt(self, func, cnt: int) -> bool:
+        return cnt >= func.__code__.co_argcount
 
     def try_pop(self, father: Root | Func, raise_err: bool = True):
         "尝试获取一个堆栈数据"

@@ -67,6 +67,10 @@ class PopFromEmptyStack(Error):
     pass
 
 
+class MissingArg(Error):
+    pass
+
+
 ERRDICT = {
     "BaseError": BaseError,
     "Error": Error,
@@ -80,4 +84,5 @@ ERRDICT = {
     "CallError": CallErr,
     "BuilderErr": BuilderErr,
     "PopFromEmptyStack": PopFromEmptyStack,
+    "MissingArg": MissingArg,
 }
