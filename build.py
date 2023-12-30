@@ -12,7 +12,7 @@ from datetime import datetime
 
 build_time = datetime.now().strftime("%Y-%m-%d, %H:%M:%S")
 
-compile_info=f"""# This file may auto genrated by builder.
+compile_info = f"""# This file may auto genrated by builder.
 
 IS_COMPILE = True
 COMPILE_DATE = '{build_time}'
@@ -24,7 +24,7 @@ print("准备构建Heap")
 print(f"版本:{HEAP_VERSION_STR}")
 
 print("生成版本信息:")
-with open('heap/compie_info.py','w') as f:
+with open("heap/compile_info.py", "w") as f:
     f.write(compile_info)
 
 rmtree("dist", ignore_errors=True)
@@ -59,7 +59,7 @@ print(
     f'Out in "heap-{HEAP_VERSION_STR}-{system()}-{machine()}.zip", bin file in "dist/cli.bin"'
 )
 
-compile_info=f"""# This file may auto genrated by builder.
+compile_info = f"""# This file may auto genrated by builder.
 
 IS_COMPILE = False
 COMPILE_DATE = '{build_time}'
@@ -67,5 +67,5 @@ COMPILE_DATE = '{build_time}'
 
 chdir(split(__file__)[0])
 
-with open('heap/compie_info.py','w') as f:
+with open("heap/compile_info.py", "w") as f:
     f.write(compile_info)
