@@ -17,6 +17,7 @@ LIBS = {
     "file": "heap_file",
     "io": "heap_io",
     "weblib": "heap_weblib",
+    "toml": "heap_toml",
     "json": "heap_json",
     "_hello": "heap_hello",
     "_py_builtin": "heap_builtin",
@@ -25,6 +26,5 @@ HEAP_LIBS = {
     "functionic": "functionic.heap",
     "endl": "endl.heap",
     "builtin": "builtin.heap",
-    "super_header": "super_header.heap",
     "print_it": "print_it.heap",
 }
