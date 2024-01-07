@@ -1,12 +1,16 @@
+from inspect import isfunction
 from os import get_terminal_size
-from os.path import exists, join
+from os.path import split as osplit
 from shlex import split
 
 import click
 
 from heap import Lexer, Builder, Runner
+from heap.asts import Func
+from heap import hook
+from textwrap import shorten
 
-out = lambda *args, **kwargs: print(*args, **{**kwargs, "end": ""})
+out = lambda *args, **kwargs: print("".join(args), **{**kwargs, "end": ""})
 X, Y = 0, 0
 
 
@@ -17,12 +21,14 @@ class Crack_Runner(Runner):
         self.CrAcK_oldvisit = self.visit
         self.CrAcK_oldrun = self.run
 
+        def CrAcK_print(val):
+            Ui.print(val)
+
         def CrAcK_visit(node, father):
             FLAG = True
 
             if self.Crack_shutupcnt > 0:
                 self.Crack_shutupcnt -= 1
-                Ui.good_message(f"Shutuptting, {self.Crack_shutupcnt}")
                 return self.CrAcK_oldvisit(node, father)
 
             while FLAG:
@@ -30,15 +36,13 @@ class Crack_Runner(Runner):
                 Ui.next_line()
                 Ui.good_message(f"Status:")
                 Ui.next_line()
-                Ui.good_message(f'  File Path="{self.CrAcK_filepath}"')
-                Ui.next_line()
-                Ui.good_message(f'  Tokens cnt="{self.CrAcK_tokscnt}"')
-                Ui.next_line()
                 Ui.good_message(f'  Level="{"/".join(self.running_block)}"')
                 Ui.next_line()
                 Ui.good_message(f'  Current="{node.__class__.__name__}"')
                 Ui.next_line()
                 Ui.good_message(f'  Stack (Last three items)="{father.stack[-3:]}"')
+                Ui.next_line()
+                Ui.good_message(f"-" * (get_terminal_size()[0] - 2))
                 Ui.next_line()
 
                 command = split(Ui.query_command(":"))
@@ -51,7 +55,24 @@ class Crack_Runner(Runner):
                         FLAG = False
 
                     elif command[0] in ("level",):
-                        Ui.good_message(f'  Level="{"/".join(self.running_block)}"')
+                        Ui.good_message(f'Level="{"/".join(self.running_block)}"')
+
+                    elif command[0] in ("vars",):
+                        Ui.good_message(f"All vars:")
+                        for name, type in father.var_ctx.items():
+                            if not (isfunction(type) or isinstance(type, Func)):
+                                Ui.good_message(f"  {name}={type}")
+                    elif command[0] in ("inspect", "i"):
+                        variable_cnt = 0
+                        func_cnt = 0
+                        for type in father.var_ctx.values():
+                            if isfunction(type) or isinstance(type, Func):
+                                func_cnt += 1
+                            else:
+                                variable_cnt += 1
+                        Ui.good_message(f"Inspect")
+                        Ui.good_message(f"  Variables cnt={variable_cnt}")
+                        Ui.good_message(f"  Funcs cnt={func_cnt}")
 
                     elif command[0] in ("status",):
                         Ui.good_message(f"Status:")
@@ -67,7 +88,7 @@ class Crack_Runner(Runner):
                         exit(0)
                 elif len(command) == 2:
                     if command[0] in ("shutup", "s"):
-                        Ui.good_message(f"  Going shutup, blocks={command[1]}")
+                        Ui.good_message(f"Going shutup, blocks={command[1]}")
                         self.Crack_shutupcnt = int(command[1])
                         FLAG = False
 
@@ -80,16 +101,22 @@ class Crack_Runner(Runner):
 
         self.visit = CrAcK_visit
         self.run = CrAcK_run
+        hook.print_val = CrAcK_print
 
         pass
 
 
 class Ui:
+    def print(j):
+        Cursor.clear_current_line()
+
+        out(f"P|{j}\n")
+
     def main_loop(file_path: str):
         out(Cursor.clear())
 
         # Before debug
-        with open(file_path) as f:
+        with open(file_path, encoding="utf-8") as f:
             CONTENT = f.read()
         l = Lexer(CONTENT)
         toks = l.lex()
@@ -97,7 +124,7 @@ class Ui:
         b = Builder(toks, file_path)
         ast_tree = b.parse()
 
-        r = Crack_Runner(ast_tree, join(__file__, "heap"))
+        r = Crack_Runner(ast_tree, osplit(file_path)[0])
         r.CrAcK_filepath = file_path
         r.CrAcK_tokscnt = len(toks)
         r.Crack_shutupcnt = 0
