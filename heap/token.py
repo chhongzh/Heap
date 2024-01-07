@@ -14,6 +14,8 @@ class MetaInfo:
     start_pos: int
     end_pos: int
 
+    line_no: int
+
 
 class Token:
     def __init__(self, token_type: int, token_value, meta: MetaInfo):

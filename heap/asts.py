@@ -7,10 +7,12 @@ Heap的所有ast节点
 
 from typing import Any
 import abc
-from .token import Token
+from .token import Token, MetaInfo
 
 
 class Node(abc.ABC):
+    meta_info: MetaInfo
+
     def __repr__(self) -> str:
         "返回字符串格式, 这个方法必须重载"
 

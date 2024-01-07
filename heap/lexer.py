@@ -20,6 +20,7 @@ class Lexer:
     def __init__(self, content: str):
         self.content = content
         self.pos = -1
+        self.line_no = 1
         self.current = None
         self.tok = []
 
@@ -50,13 +51,21 @@ class Lexer:
         while self.current:
             if self.current in OPS:
                 self.tok.append(
-                    Token(OPS[self.current], self.current, MetaInfo(self.pos, self.pos))
+                    Token(
+                        OPS[self.current],
+                        self.current,
+                        MetaInfo(self.pos, self.pos, self.line_no),
+                    )
                 )
                 self.advance()
             elif self.current == "[":
                 temp_pos = self.pos
                 self.tok.append(
-                    Token(OBJ, self.expr_list(), MetaInfo(temp_pos, temp_pos))
+                    Token(
+                        OBJ,
+                        self.expr_list(),
+                        MetaInfo(temp_pos, temp_pos, self.line_no),
+                    )
                 )
 
             elif self.current == "#":
@@ -65,7 +74,9 @@ class Lexer:
             elif self.current == "-":
                 self.advance()
                 if self.current == ">":
-                    self.tok.append(Token(LINK, "->", MetaInfo(self.pos, self.pos)))
+                    self.tok.append(
+                        Token(LINK, "->", MetaInfo(self.pos, self.pos, self.line_no))
+                    )
                     self.advance()
             elif self.current == '"':
                 self.advance()
@@ -74,31 +85,45 @@ class Lexer:
                 data = self.string_match()
                 end_pos = self.pos
 
-                self.tok.append(Token(OBJ, data, MetaInfo(start_pos, end_pos)))
+                self.tok.append(
+                    Token(OBJ, data, MetaInfo(start_pos, end_pos, self.line_no))
+                )
             elif self.number_check():
                 start_pos = self.pos
                 data = self.num_match()
                 end_pos = self.pos
-                self.tok.append(Token(OBJ, data, MetaInfo(start_pos, end_pos)))
+                self.tok.append(
+                    Token(OBJ, data, MetaInfo(start_pos, end_pos, self.line_no))
+                )
             elif self.current.isalpha():
                 start_pos = self.pos
 
                 val = self.id_match()
                 if val in KEYWORDS:
                     self.tok.append(
-                        Token(KEYWORD, val, MetaInfo(start_pos, start_pos + len(val)))
+                        Token(
+                            KEYWORD,
+                            val,
+                            MetaInfo(start_pos, start_pos + len(val), self.line_no),
+                        )
                     )
                 else:
                     self.tok.append(
                         Token(
                             ID,
                             val,
-                            MetaInfo(start_pos, start_pos + len(val) if val else 0),
+                            MetaInfo(
+                                start_pos,
+                                start_pos + len(val) if val else 0,
+                                self.line_no,
+                            ),
                         )
                     )
             elif self.current == "=":
                 self.tok.append(self.match_equal())
             else:
+                if self.current == "\n":
+                    self.line_no += 1
                 self.advance()
 
         info(f"[Lexer]: 分词完成 (Toks cnt:{len(self.tok)})")
@@ -120,7 +145,7 @@ class Lexer:
             tok = buf[0]
 
             if tok == "=":
-                return Token(EQUAL, "=", MetaInfo(self.pos, self.pos))
+                return Token(EQUAL, "=", MetaInfo(self.pos, self.pos, self.line_no))
             else:
                 hook.print_error(SyntaxErr(f"", -1))
 

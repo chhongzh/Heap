@@ -9,8 +9,9 @@ Heap的运行器,
 import sys
 from importlib import import_module
 from inspect import isfunction
-from os.path import exists, dirname, join, split, isfile, isdir
+from os.path import exists, dirname, join, split, isfile, isdir, abspath
 from .log import info, debug, critical, error
+from .const_value import HEAP_RUN_IMPORT, HEAP_RUN_DEFAULT
 
 from .error import (
     BaseError,
@@ -54,7 +55,7 @@ from . import hook
 class Runner:
     """Heap 解析器"""
 
-    def __init__(self, root: Root, path: str, need_inject_module=True):
+    def __init__(self, root: Root, path: str, need_inject_module=True, default_ctx={}):
         """
         传入一个Root节点, 并运行
 
@@ -63,9 +64,13 @@ class Runner:
         """
 
         self.root = root
-        self.include_path = [path]
+        self.include_path = [abspath(path)]
+        self.include_file = [self.root.file_path]
         # Running Blobk - 记录当前块
         self.running_block = []
+
+        # Running Ast - 记录运行Ast
+        self.running_ast = []
 
         if need_inject_module:
             self.load_module("builtin", self.root)  # 注入内建库
@@ -74,6 +79,9 @@ class Runner:
         # 魔法变量:
         self.root.var_ctx["heap_excutable"] = sys.executable
         self.root.var_ctx["heap_argv"] = []
+
+        # 传入默认的上下文
+        self.root.var_ctx = {**self.root.var_ctx, **default_ctx}
 
         self.root.runner = self  # 注入自己
 
@@ -91,6 +99,7 @@ class Runner:
 
         # 添加到Running_Block
         self.running_block.append(node.__class__.__name__)
+        self.running_ast.append(node)
 
         if isinstance(node, Func):
             self.running_block[-1] = f"Defining Func {node.name}"
@@ -150,6 +159,7 @@ class Runner:
             self.expr_link(node, father)
 
         self.running_block.pop()
+        self.running_ast.pop()
 
     def expr_get(self, node: Get, father: Root | Func):
         if node.name not in father.var_ctx.keys():
@@ -208,12 +218,20 @@ class Runner:
 
             builder = Builder(toks)
             ast = builder.parse()
+
+            # 传入 heap_run
+            father.var_ctx["heap_run"] = HEAP_RUN_IMPORT
             self.visits(ast.body, father)
+
+            # 释放
+            father.var_ctx["heap_run"] = HEAP_RUN_DEFAULT
 
             return
 
         path = join(self.include_path[-1], path)
         self.include_path.append(dirname(path))  # 将解析目录加入到栈
+        self.include_file.append(path)
+
         info(f"[Runner]: 尝试打开{path}")
 
         if isdir(path) or not isfile(path):
@@ -227,9 +245,15 @@ class Runner:
 
         builder = Builder(toks)
         ast = builder.parse()
+        # 传入 heap_run
+        father.var_ctx["heap_run"] = HEAP_RUN_IMPORT
         self.visits(ast.body, father)
 
+        # 释放
+        father.var_ctx["heap_run"] = HEAP_RUN_DEFAULT
+
         self.include_path.pop()  # 弹出
+        self.include_file.pop()  # 弹出
 
     def expr_args(self, args: list, father: Func | Root, delete=True):
         """解析函数参数"""
@@ -453,7 +477,7 @@ class Runner:
                 return val
 
     def check_func_cnt(self, func, cnt: int) -> bool:
-        return cnt >= func.__code__.co_argcount
+        return cnt >= (func.__code__.co_argcount - 1)
 
     def try_pop(self, father: Root | Func, raise_err: bool = True):
         "尝试获取一个堆栈数据"
@@ -481,7 +505,9 @@ class Runner:
 
     def hook_raise_error(self, error: BaseError):
         print("Traceback: On running code, but error was generated.")
-        print(f'On file: "{self.root.file_path}"')
-        for name in self.running_block:
+        print(
+            f'On file: "{self.include_file[-1]}", line {self.running_ast[-1].meta_info.line_no}'
+        )
+        for name, ast in zip(self.running_block, self.running_ast):
             print(f"  At Statement:{name}")
         hook.raise_error(error)

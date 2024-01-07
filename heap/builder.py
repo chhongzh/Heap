@@ -83,72 +83,133 @@ class Builder:
 
                     return t
                 case "div":
+                    meta_info = self.tok.meta
                     self.advance()
                     self.eat([SEM])  # SEM
+                    temp = Div()
+                    temp.meta_info = meta_info
 
-                    return Div()
+                    return
                 case "mul":
                     self.advance()
+                    meta_info = self.tok.meta
                     self.eat([SEM])  # SEM
 
-                    return Mul()
+                    temp = Mul()
+                    temp.meta_info = meta_info
+
+                    return temp
                 case "set":
+                    meta_info = self.tok.meta
+
                     t = self.match_set()
                     self.eat([SEM])  # SEM  # SEM
 
+                    t.meta_info = meta_info
+
                     return t
                 case "get":
+                    meta_info = self.tok.meta
+
                     t = self.match_get()
                     self.eat([SEM])  # SEM
 
+                    t.meta_info = meta_info
                     return t
                 case "push":
+                    meta_info = self.tok.meta
+
                     t = self.match_push()
                     self.eat([SEM])  # SEM  # SEM
+
+                    t.meta_info = meta_info
 
                     return t
                 case "print":
                     self.advance()  # PRINT
+                    meta_info = self.tok.meta
+
                     self.eat([SEM])  # SEM  # SEM
+
+                    temp = Print()
+                    temp.meta_info = meta_info
 
                     return Print()
                 case "add":
                     self.advance()  # ADD
+                    meta_info = self.tok.meta
                     self.eat([SEM])  # SEM  # SEM
 
-                    return Add()
+                    t = Add()
+                    t.meta_info = meta_info
+
+                    return
                 case "pop":
                     self.advance()  # pop
+                    meta_info = self.tok.meta
                     self.eat([SEM])  # SEM  # SEM
 
-                    return Pop()
+                    t = Pop()
+                    t.meta_info = meta_info
+                    return t
                 case "sub":
                     self.advance()  # SUB
+                    meta_info = self.tok.meta
                     self.eat([SEM])  # SEM  # SEM
 
-                    return Sub()
+                    t = Sub()
+                    t.meta_info = meta_info
+                    return t
                 case "return":
+                    meta_info = self.tok.meta
                     self.advance()  # RETURN
                     t = self.match_return()
 
+                    t.meta_info = meta_info
+
                     return t
                 case "while":
-                    return self.match_while()
+                    meta_info = self.tok.meta
+                    t = self.match_while()
+                    t.meta_info = meta_info
+                    return t
                 case "if":
-                    return self.match_if()
+                    meta_info = self.tok.meta
+
+                    t = self.match_if()
+                    t.meta_info = meta_info
+
+                    return t
                 case "include":
-                    return self.match_include()
+                    meta_info = self.tok.meta
+
+                    t = self.match_include()
+                    t.meta_info = meta_info
+
+                    return t
                 case "command":
-                    return self.match_command()
+                    meta_info = self.tok.meta
+
+                    t = self.match_command()
+                    t.meta_info = meta_info
+
+                    return t
                 case "input":
+                    meta_info = self.tok.meta
                     self.advance()  # Input
                     title = Replace if self.tok.type == REPLACE else self.tok.value
                     self.eat([OBJ])  # title
                     self.eat([SEM])  # SEM  # sem
-                    return Input(title)
+                    t = Input(title)
+                    t.meta_info = meta_info
+                    return t
 
                 case "iter":
-                    return self.match_iter()
+                    meta_info = self.tok.meta
+                    t = self.match_iter()
+                    t.meta_info = meta_info
+
+                    return t
 
                 case _:
                     hook.print_error(SyntaxErr(self.tok.value, self.pos, "未知的符号"))
@@ -160,11 +221,24 @@ class Builder:
                 next_tok = self.toks[self.pos + 1]
                 next_tok: Token
                 if next_tok.type == EQUAL:
-                    return self.match_assignment()
-            return self.match_call()
+                    meta_info = self.tok.meta
+
+                    t = self.match_assignment()
+                    t.meta_info = meta_info
+
+                    return t
+            meta_info = self.tok.meta
+
+            t = self.match_call()
+            t.meta_info = meta_info
+
+            return t
 
         elif self.tok.type in (OBJ, REPLACE) and self.toks[self.pos + 1].type == LINK:
-            return self.match_link()
+            meta_info = self.tok.meta
+            t = self.match_link()
+            t.meta_info = meta_info
+            return t
 
         self.catch_error()  # 捕捉错误(无法识别的tok)
         self.advance()
