@@ -27,4 +27,5 @@ HEAP_LIBS = {
     "endl": "endl.heap",
     "builtin": "builtin.heap",
     "print_it": "print_it.heap",
+    "prompt": "prompt.heap",
 }
