@@ -353,8 +353,11 @@ class Builder:
         while self.tok.type != SEM:
             if self.tok.type == REPLACE:
                 returns.append(Replace)
+            elif self.tok.type == ID:
+                returns.append(Variable(self.tok.value))
             else:
                 returns.append(self.tok.value)
+
             self.advance()
 
         self.advance()  # SKIP SEM
