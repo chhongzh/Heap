@@ -28,6 +28,7 @@ from .asts import (
     LinkExpr,
     Mul,
     Node,
+    Variable,
     Pop,
     Root,
     Func,
@@ -267,6 +268,8 @@ class Runner:
             if arg == Replace:
                 args_list.append(replace_args[idx])
                 idx += 1
+            elif isinstance(arg, Variable):  # 处理变量
+                args.append(father.var_ctx[arg.name])
             else:
                 args_list.append(arg)
 
@@ -289,10 +292,9 @@ class Runner:
                 for l1, op, l2, body in zip(
                     node.l1s, node.ops, node.l2s, node.bodys[:-1]
                 ):
-                    temp_data = self.expr_args([l1, op, l2], father, False)
+                    temp_data = self.expr_args([l1, l2], father, False)
                     l1 = temp_data[0]
-                    op = temp_data[1]
-                    l2 = temp_data[2]
+                    l2 = temp_data[1]
 
                     if op == "equal" and l1 == l2:
                         return self.visits(body, father)
@@ -316,10 +318,9 @@ class Runner:
 
             elif len(node.l1s) == len(node.bodys):
                 for l1, op, l2, body in zip(node.l1s, node.ops, node.l2s, node.bodys):
-                    temp_data = self.expr_args([l1, op, l2], father, False)
+                    temp_data = self.expr_args([l1, l2], father, False)
                     l1 = temp_data[0]
-                    op = temp_data[1]
-                    l2 = temp_data[2]
+                    l2 = temp_data[1]
 
                     if op == "equal" and l1 == l2:
                         return self.visits(body, father)
@@ -346,10 +347,10 @@ class Runner:
     def expr_while(self, node: While, father: Root | Func):
         "解析while语句"
 
-        temp = self.expr_args([node.expr1, node.op, node.expr2], father, False)
+        temp = self.expr_args([node.expr1, node.expr2], father, False)
         expr1 = temp[0]
-        op = temp[1]
-        expr2 = temp[2]
+        op = node.op
+        expr2 = temp[1]
 
         if op == "notequal":
             while expr1 != expr2:

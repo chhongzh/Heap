@@ -5,6 +5,7 @@
 Heap的Lexer
 """
 
+from io import StringIO
 from .ops import OPS
 from .token import MetaInfo, Token
 from .types import EQUAL, OBJ, ID, KEYWORD, LINK
@@ -119,7 +120,7 @@ class Lexer:
                             ),
                         )
                     )
-            elif self.current == "=":
+            elif self.current in ("=", "<", ">"):
                 self.tok.append(self.match_equal())
             else:
                 if self.current == "\n":
@@ -146,39 +147,65 @@ class Lexer:
 
             if tok == "=":
                 return Token(EQUAL, "=", MetaInfo(self.pos, self.pos, self.line_no))
+            elif tok == ">":
+                return Token(KEYWORD, "big", MetaInfo(self.pos, self.pos, self.line_no))
+            elif tok == "<":
+                return Token(
+                    KEYWORD, "small", MetaInfo(self.pos, self.pos, self.line_no)
+                )
+            else:
+                hook.print_error(SyntaxErr(f"", -1))
+
+        elif len(buf) == 2:  # >=, ==, <=
+            if buf == ["<", "="]:
+                return Token(
+                    KEYWORD, "smallequal", MetaInfo(self.pos, self.pos, self.line_no)
+                )
+            elif buf == [">", "="]:
+                return Token(
+                    KEYWORD, "bigequal", MetaInfo(self.pos, self.pos, self.line_no)
+                )
+            elif buf == ["=", "="]:
+                return Token(
+                    KEYWORD, "equal", MetaInfo(self.pos, self.pos, self.line_no)
+                )
             else:
                 hook.print_error(SyntaxErr(f"", -1))
 
     def string_match(self):
         "匹配字符串"
 
-        cache = []
+        cache = StringIO()
         while self.current and self.current != '"':
             if self.current == "\\":
                 self.advance()
                 match self.current:
                     case "n":
-                        cache.append("\n")
+                        cache.write("\n")
                     case "t":
-                        cache.append("\t")
+                        cache.write("\t")
                     case '"':
-                        cache.append('"')
+                        cache.write('"')
                     case "r":
-                        cache.append("\r")
+                        cache.write("\r")
                     case "a":
-                        cache.append("\a")
+                        cache.write("\a")
                     case "b":
-                        cache.append("\b")
+                        cache.write("\b")
                     case _:
                         hook.raise_error(
                             LexerError(f"\\{self.current}", self.pos, "未知的转义")
                         )
                 self.advance()
                 continue
-            cache.append(self.current)
+            cache.write(self.current)
             self.advance()
         self.advance()
-        return "".join(cache)
+
+        val = cache.getvalue()
+        cache.close()
+
+        return val
 
     def is_num(self):
         """判断是否是数字"""
@@ -256,8 +283,8 @@ class Lexer:
     def comment_match(self):
         """解析注释"""
 
-        lst = ["\n", "#"]
-        while self.current and self.current not in lst:
+        skpi_char = ["\n", "#"]
+        while self.current and self.current not in skpi_char:
             self.advance()
         self.advance()
 

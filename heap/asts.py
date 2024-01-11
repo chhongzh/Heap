@@ -115,6 +115,14 @@ class Replace(Node):
         return "Replace()"
 
 
+class Variable(Node):
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f"Variable({repr(self.name)})"
+
+
 class Pop(Node):
     def __repr__(self):
         return "Pop()"

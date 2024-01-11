@@ -26,6 +26,7 @@ from .asts import (
     Pop,
     Input,
     While,
+    Variable,
 )
 from .types import EQUAL, LINK, OBJ, SEM, KEYWORD, REPLACE, ID, COLON
 from . import hook
@@ -197,7 +198,7 @@ class Builder:
                 case "input":
                     meta_info = self.tok.meta
                     self.advance()  # Input
-                    title = Replace if self.tok.type == REPLACE else self.tok.value
+                    title = self.make_var()
                     self.eat([OBJ])  # title
                     self.eat([SEM])  # SEM  # sem
                     t = Input(title)
@@ -309,6 +310,13 @@ class Builder:
 
         return If(l1s, ops, l2s, bodys)
 
+    def make_var(self):
+        if self.tok.type == REPLACE:
+            return Replace
+
+        elif self.tok.type == ID:
+            return Variable(self.tok.value)
+
     def if_const(self):
         "匹配if结构"
 
@@ -323,11 +331,11 @@ class Builder:
 
             return None, None, None, body
         self.advance()  # skip IF,ELIF,ELSE,ENDIF
-        l1 = Replace if self.tok.type == REPLACE else self.tok.value
+        l1 = self.make_var()
         self.advance()
-        op = Replace if self.tok.type == REPLACE else self.tok.value
+        op = self.tok.value
         self.advance()
-        l2 = Replace if self.tok.type == REPLACE else self.tok.value
+        l2 = self.make_var()
         self.advance()
 
         self.eat([COLON])  # skip SEM
@@ -363,6 +371,8 @@ class Builder:
         while self.tok.type != SEM:
             if self.tok.type == REPLACE:
                 args.append(Replace)
+            elif self.tok.type == ID:
+                args.append(Variable(self.tok.value))
             else:
                 args.append(self.tok.value)
             self.advance()
@@ -382,13 +392,13 @@ class Builder:
         "匹配while语句"
 
         self.advance()  # skip while
-        expr1 = Replace if self.tok.type == REPLACE else self.tok.value
+        expr1 = self.make_var()
 
         self.advance()
-        op = Replace if self.tok.type == REPLACE else self.tok.value
+        op = self.tok.value
 
         self.advance()
-        expr2 = Replace if self.tok.type == REPLACE else self.tok.value
+        expr2 = self.make_var()
 
         self.advance()  # skip expr2
         self.eat([COLON])  # skip :
@@ -419,7 +429,7 @@ class Builder:
 
         name = self.tok.value
         self.advance()  # skip NAME
-        value = Replace if self.tok.type == REPLACE else self.tok.value
+        value = self.make_var()
         self.advance()  # skip VALUE
 
         return Set(name, value)
@@ -504,7 +514,7 @@ class Builder:
 
         self.advance()  # skip keyword
 
-        iter_item = Replace if self.tok.type == REPLACE else self.tok.value
+        iter_item = self.make_var()
         body = []
 
         self.advance()  # skip list
