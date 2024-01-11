@@ -198,7 +198,10 @@ class Builder:
                 case "input":
                     meta_info = self.tok.meta
                     self.advance()  # Input
-                    title = self.make_var()
+                    if self.tok.type in (ID, REPLACE):
+                        title = self.make_var()
+                    else:
+                        title = self.tok.value
                     self.eat([OBJ])  # title
                     self.eat([SEM])  # SEM  # sem
                     t = Input(title)
