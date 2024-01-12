@@ -5,10 +5,14 @@
 true   = 1; # 非零即真
 false  = 0;
 
-func println content:
-    get content;
-    print;
+func println contents:
+    printl contents;
 
     push "\n";
+    print;
+endfunc
+
+func printl contents:
+    get contents;
     print;
 endfunc
