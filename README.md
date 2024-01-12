@@ -1,5 +1,5 @@
 # Heap
-Heap是一门类似于汇编的编程语言
+Heap是一门指令式编程语言
 
 ## Features
 - 变量支持
@@ -8,17 +8,21 @@ Heap是一门类似于汇编的编程语言
 > set one $;
 > get one;
 < 1
+
+> # In the new version, you can do this.
+> two = 2;
+> get two;
+< 2;
 ```
 
 - 函数支持
 
 ```
 > func hello:
-..    push "Hello world";
-..    print;
+..    println "Hello World!";
 ..endfunc
 > hello;
-Hello world
+Hello world!
 ```
 
 - 注释支持
@@ -47,7 +51,7 @@ Hello world
 ```
 
 ## Install
-安装Python环境后, 执行`python3 -c "$(curl -fsSL https://raw.githubusercontent.com/chhongzh/Heap/main/installer.py)"`. 安装脚本会自动完成安装.
+下载Releases
 
 ## Docs
 [On this Repo](docs/README.md)
