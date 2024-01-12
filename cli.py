@@ -12,7 +12,7 @@ import click
 
 from heap import Lexer, Builder, Runner
 from heap.repr import heap_repr
-from heap.loader import loader
+from heap import loader
 from heap.version_info import HEAP_VERSION_STR
 
 try:
