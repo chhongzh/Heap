@@ -5,7 +5,7 @@
 提供了一些基本的日志
 """
 
-from logging import getLogger, StreamHandler, Formatter, DEBUG
+from logging import getLogger, StreamHandler, Formatter, WARN
 from io import StringIO
 from .version_info import HEAP_VERSION_STR
 
@@ -15,7 +15,7 @@ HEAP_HANDLER = StreamHandler(HEAP_IO)
 HEAP_FORMATTER = Formatter("[%(asctime)s] [%(levelname)5s]: %(message)s")
 
 HEAP_HANDLER.setFormatter(HEAP_FORMATTER)
-HEAP_LOGGER.setLevel(DEBUG)
+HEAP_LOGGER.setLevel(WARN)
 
 HEAP_LOGGER.addHandler(HEAP_HANDLER)
 
