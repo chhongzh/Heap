@@ -198,7 +198,7 @@ class Builder:
                 case "input":
                     meta_info = self.tok.meta
                     self.advance()  # Input
-                    if self.tok.type in (ID, REPLACE):
+                    if self.tok.type in (ID, REPLACE):  # 变量表达式
                         title = self.make_var()
                     else:
                         title = self.tok.value
