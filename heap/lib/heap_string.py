@@ -35,3 +35,16 @@ def count(father: Root | Func, val: str, o: str):
 
 def decode(father: Root | Func, val: bytes, encoding: str):
     return val.decode(encoding)
+
+
+HEAP_EXPORT_FUNC = {
+    "capitalize": capitalize,
+    "count": count,
+    "decode": decode,
+    "lower": lower,
+    "replace": replace,
+    "replace_count": replace_count,
+    "swapcase": swapcase,
+    "title": title,
+    "upper": upper,
+}

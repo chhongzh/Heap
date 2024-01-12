@@ -196,15 +196,9 @@ class Runner:
             info("[Runner]: [Heap-Bridge]: 导入来自Python的模块")
 
             module = import_module(f".lib.{LIBS[path]}", "heap")
-            for name in dir(module):
-                if (
-                    not name.startswith("__")
-                    and not name.endswith("__")
-                    and isfunction(module.__dict__[name])
-                    and name != "_heap_init"
-                ):
-                    info(f"[Runner]: [Heap-Bridge]: 注册函数: Name:{name}")
-                    father.var_ctx[name] = module.__dict__[name]
+            for name in module.__dict__["HEAP_EXPORT_FUNC"]:
+                info(f"[Runner]: [Heap-Bridge]: 注册函数: Name:{name}")
+                father.var_ctx[name] = module.__dict__[name]
             if "_heap_init" in dir(module):
                 info(f"[Runner]: [Heap-Bridge]: 在模块中找到钩子init, 调用")
 

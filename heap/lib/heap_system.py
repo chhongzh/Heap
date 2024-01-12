@@ -13,3 +13,8 @@ def exec(father: Root | Func, raw_code: str):
     b = Builder(l).parse()
 
     father.runner.visits(b.body, father)
+
+
+HEAP_EXPORT_FUNC = {
+    "exec": exec,
+}

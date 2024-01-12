@@ -17,3 +17,10 @@ def to_int(father: Root | Func):
 # 转小数
 def to_float(father: Root | Func):
     father.stack[-1] = float(father.stack[-1])
+
+
+HEAP_EXPORT_FUNC = {
+    "to_float": to_float,
+    "to_int": to_int,
+    "to_str": to_str,
+}

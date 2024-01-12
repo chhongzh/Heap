@@ -11,3 +11,8 @@ from ..asts import Func, Root
 
 def toml_loads(father: Root | Func, s: str):
     return loads(s)
+
+
+HEAP_EXPORT_FUNC = {
+    "toml_loads": toml_loads,
+}

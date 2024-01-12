@@ -11,3 +11,9 @@ def random_randint(father: Root | Func, a: int, b: int):
 
 def random_choice(father: Root | Func, lst: list):
     father.stack.append(random.choice(lst))
+
+
+HEAP_EXPORT_FUNC = {
+    "random_choice": random_choice,
+    "random_randint": random_randint,
+}

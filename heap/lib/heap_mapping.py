@@ -31,3 +31,13 @@ def get_keys(_: Root | Func, mapping: dict):
 
 def get_values(_: Root | Func, mapping: dict):
     return mapping.values()
+
+
+HEAP_EXPORT_FUNC = {
+    "get_key": get_key,
+    "get_keys": get_keys,
+    "get_values": get_values,
+    "mapping": mapping,
+    "pop_key": pop_key,
+    "set_key": set_key,
+}

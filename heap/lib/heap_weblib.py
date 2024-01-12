@@ -33,3 +33,12 @@ def weblib_req_add_header(
 
 def weblib_getcode(father: Root | Func, req: request.Request):
     father.stack.append(req.status)
+
+
+HEAP_EXPORT_FUNC = {
+    "weblib_get": weblib_get,
+    "weblib_getcode": weblib_getcode,
+    "weblib_make_req": weblib_make_req,
+    "weblib_req_add_header": weblib_req_add_header,
+    "weblib_send_req": weblib_send_req,
+}

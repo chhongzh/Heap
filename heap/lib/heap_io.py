@@ -59,3 +59,21 @@ def io_seek(_: Func | Root, file_io: FileIO, p: int):
 
 def io_seekable(_: Func | Root, file_io: FileIO):
     return file_io.seekable()
+
+
+HEAP_EXPORT_FUNC = {
+    "io_close": io_close,
+    "io_fileno": io_fileno,
+    "io_flush": io_flush,
+    "io_isatty": io_isatty,
+    "io_read": io_read,
+    "io_readable": io_readable,
+    "io_readline": io_readline,
+    "io_readlines": io_readlines,
+    "io_seek": io_seek,
+    "io_seekable": io_seekable,
+    "io_tell": io_tell,
+    "io_writable": io_writable,
+    "io_write": io_write,
+    "io_writelines": io_writelines,
+}

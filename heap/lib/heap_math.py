@@ -48,3 +48,16 @@ def gcd(father: Root | Func, val, val1):
 
 def _heap_init(father: Root | Func):
     father.var_ctx["math_pi"] = math.pi
+
+
+HEAP_EXPORT_FUNC = {
+    "ceil": ceil,
+    "cos": cos,
+    "fabs": fabs,
+    "floor": floor,
+    "gcd": gcd,
+    "getpi": getpi,
+    "pow": pow,
+    "sin": sin,
+    "sqrt": sqrt,
+}
