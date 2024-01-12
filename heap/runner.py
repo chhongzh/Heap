@@ -130,13 +130,13 @@ class Runner:
             # While 也有可能会有返回值
             return self.expr_while(node, father)
         elif isinstance(node, Return):
-            dt = self.expr_args(node.vals, father)
-            info(f"[Runner]: 返回值:({dt})")
+            return_data = self.expr_args(node.vals, father)
+            info(f"[Runner]: 返回值:({return_data})")
 
             # 别忘记在Return 之前删除
             self.running_block.pop()
 
-            return dt
+            return return_data
         elif isinstance(node, Sub):
             b, a = self.try_pop(father), self.try_pop(father)
             father.stack.append(a - b)
@@ -165,7 +165,7 @@ class Runner:
 
     def expr_get(self, node: Get, father: Root | Func):
         if node.name not in father.var_ctx.keys():
-            self.hook_raise_error(NotDefine(f"变量:{node.name}, 并未创建, 但却被访问了", -1))
+            self.hook_raise_error(NotDefine(f"变量:{node.name}, 并未创建, 但却被访问了"))
         father.stack.append(father.var_ctx[node.name])
 
     def expr_link(self, node: LinkExpr, father: Root | Func):
