@@ -1,0 +1,20 @@
+include "os";
+include "system";
+include "ios";
+
+system_get_stdout;
+o_std = $;
+
+ios_stringio;
+n_std = $;
+
+println n_std;
+println o_std;
+
+system_set_stdout n_std;
+println "You Cant See It";
+
+system_set_stdout o_std;
+
+ios_getvalue n_std;
+println $;
