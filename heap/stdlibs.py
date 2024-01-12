@@ -21,6 +21,8 @@ LIBS = {
     "toml": "heap_toml",
     "type": "heap_type",
     "weblib": "heap_weblib",
+    "os": "heap_os",
+    "ios": "heap_ios",
 }
 HEAP_LIBS = {
     "functionic": "functionic.heap",
