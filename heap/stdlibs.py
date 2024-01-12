@@ -23,6 +23,7 @@ LIBS = {
     "weblib": "heap_weblib",
     "os": "heap_os",
     "ios": "heap_ios",
+    "queue": "heap_queue",
 }
 HEAP_LIBS = {
     "functionic": "functionic.heap",
