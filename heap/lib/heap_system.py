@@ -3,6 +3,7 @@
 
 from ..asts import Root, Func
 from .. import Lexer, Builder, Runner
+import sys
 
 
 def exec(father: Root | Func, raw_code: str):
@@ -15,6 +16,16 @@ def exec(father: Root | Func, raw_code: str):
     father.runner.visits(b.body, father)
 
 
+def system_get_stdout(_):
+    return sys.stdout
+
+
+def system_set_stdout(_: Root | Func, stdout):
+    sys.stdout = stdout
+
+
 HEAP_EXPORT_FUNC = {
-    "exec": exec,
+    "system_exec": exec,
+    "system_get_stdout": system_get_stdout,
+    "system_set_stdout": system_set_stdout,
 }
