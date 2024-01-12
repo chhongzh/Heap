@@ -11,7 +11,7 @@ from importlib import import_module
 from inspect import isfunction
 from os.path import exists, dirname, join, split, isfile, isdir, abspath
 from .log import info, debug, critical, error
-from .const_value import HEAP_RUN_IMPORT, HEAP_RUN_DEFAULT
+from .const_value import HEAP_RUN_INCLUDE, HEAP_RUN_DEFAULT
 
 from .error import (
     BaseError,
@@ -80,6 +80,7 @@ class Runner:
         # 魔法变量:
         self.root.var_ctx["heap_excutable"] = sys.executable
         self.root.var_ctx["heap_argv"] = []
+        self.root.var_ctx["heap_run"] = HEAP_RUN_DEFAULT
 
         # 传入默认的上下文
         self.root.var_ctx = {**self.root.var_ctx, **default_ctx}
@@ -221,7 +222,7 @@ class Runner:
             ast = builder.parse()
 
             # 传入 heap_run
-            father.var_ctx["heap_run"] = HEAP_RUN_IMPORT
+            father.var_ctx["heap_run"] = HEAP_RUN_INCLUDE
             self.visits(ast.body, father)
 
             # 释放
@@ -247,7 +248,7 @@ class Runner:
         builder = Builder(toks)
         ast = builder.parse()
         # 传入 heap_run
-        father.var_ctx["heap_run"] = HEAP_RUN_IMPORT
+        father.var_ctx["heap_run"] = HEAP_RUN_INCLUDE
         self.visits(ast.body, father)
 
         # 释放
