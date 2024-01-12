@@ -198,7 +198,7 @@ class Runner:
             module = import_module(f".lib.{LIBS[path]}", "heap")
             for name in module.__dict__["HEAP_EXPORT_FUNC"]:
                 info(f"[Runner]: [Heap-Bridge]: 注册函数: Name:{name}")
-                father.var_ctx[name] = module.__dict__[name]
+                father.var_ctx[name] = module.__dict__["HEAP_EXPORT_FUNC"][name]
             if "_heap_init" in dir(module):
                 info(f"[Runner]: [Heap-Bridge]: 在模块中找到钩子init, 调用")
 
@@ -446,10 +446,13 @@ class Runner:
         for var_name in father.var_ctx:
             var_name: str
             if var_name.isupper():
-                func_obj.var_ctx = father.var_ctx[var_name]
+                func_obj.var_ctx[var_name] = father.var_ctx[var_name]
                 return_var_name.append(var_name)
-
-        func_obj.var_ctx = {**father.var_ctx, **args_dict.copy()}  # 参数
+        func_obj.var_ctx = {
+            **args_dict,
+            **func_obj.var_ctx,
+            **father.var_ctx,
+        }  # 参数
 
         func_obj.stack.clear()  # 清空stack
 
