@@ -54,7 +54,7 @@ def run(filepath, showlog, args):
     root = b.parse()
 
     r = Runner(root, dirname(filepath))
-    r.root.var_ctx["heap_argv"] = args
+    r.root.context["heap_argv"] = args
     r.run()
 
     if showlog:

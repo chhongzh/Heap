@@ -97,7 +97,7 @@ def heap_repr() -> None:
             continue
 
         ast_tree.stack = stack  # 上下文
-        ast_tree.var_ctx = var_ctx  # 上下文
+        ast_tree.context = var_ctx  # 上下文
         ast_tree.command = command  # 上下文
 
         r = Runner(ast_tree, old)

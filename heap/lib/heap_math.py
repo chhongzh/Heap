@@ -47,7 +47,7 @@ def gcd(father: Root | Func, val, val1):
 
 
 def _heap_init(father: Root | Func):
-    father.var_ctx["math_pi"] = math.pi
+    father.context["math_pi"] = math.pi
 
 
 HEAP_EXPORT_FUNC = {

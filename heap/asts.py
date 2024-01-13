@@ -20,13 +20,13 @@ class Node(abc.ABC):
 class Root(Node):
     def __init__(self, body: list = None, file_path=None):
         self.body = body
-        self.var_ctx = {}
+        self.context = {}
         self.stack = []
         self.command = {}
         self.runner: Any
         self.file_path = file_path
 
-        self.var_ctx: dict[str, Func]
+        self.context: dict[str, Func]
 
     def append(self, tok: Token):
         """增加一个节点"""
@@ -48,7 +48,7 @@ class Func(Node):
         self.args = args
         self.name = name
         self.body = body
-        self.var_ctx = {}
+        self.context = {}
         self.stack = []
         self.command = {}
 

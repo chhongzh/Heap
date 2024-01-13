@@ -78,12 +78,12 @@ class Runner:
             self.load_module("_py_builtin", self.root)  # 注入内建库
 
         # 魔法变量:
-        self.root.var_ctx["heap_excutable"] = sys.executable
-        self.root.var_ctx["heap_argv"] = []
-        self.root.var_ctx["heap_run"] = HEAP_RUN_DEFAULT
+        self.root.context["heap_excutable"] = sys.executable
+        self.root.context["heap_argv"] = []
+        self.root.context["heap_run"] = HEAP_RUN_DEFAULT
 
         # 传入默认的上下文
-        self.root.var_ctx = {**self.root.var_ctx, **default_ctx}
+        self.root.context = {**self.root.context, **default_ctx}
 
         self.root.runner = self  # 注入自己
 
@@ -105,13 +105,13 @@ class Runner:
 
         if isinstance(node, Func):
             self.running_block[-1] = f"Defining Func {node.name}"
-            father.var_ctx[node.name] = node
+            father.context[node.name] = node
         elif isinstance(node, Input):
             father.stack.append(input(self.expr_args([node.val], father)[0]))
         elif isinstance(node, Command):
             father.command[node.name] = node
         elif isinstance(node, Set):
-            father.var_ctx[node.name] = self.expr_args([node.val], father)[0]
+            father.context[node.name] = self.expr_args([node.val], father)[0]
         elif isinstance(node, Get):
             self.running_block[-1] = f'Get "{node.name}"'
 
@@ -164,9 +164,9 @@ class Runner:
         self.running_ast.pop()
 
     def expr_get(self, node: Get, father: Root | Func):
-        if node.name not in father.var_ctx.keys():
+        if node.name not in father.context.keys():
             self.hook_raise_error(NotDefine(f"变量:{node.name}, 并未创建, 但却被访问了"))
-        father.stack.append(father.var_ctx[node.name])
+        father.stack.append(father.context[node.name])
 
     def expr_link(self, node: LinkExpr, father: Root | Func):
         """解析Link语句"""
@@ -198,7 +198,7 @@ class Runner:
             module = import_module(f".lib.{LIBS[path]}", "heap")
             for name in module.__dict__["HEAP_EXPORT_FUNC"]:
                 info(f"[Runner]: [Heap-Bridge]: 注册函数: Name:{name}")
-                father.var_ctx[name] = module.__dict__["HEAP_EXPORT_FUNC"][name]
+                father.context[name] = module.__dict__["HEAP_EXPORT_FUNC"][name]
             if "_heap_init" in dir(module):
                 info(f"[Runner]: [Heap-Bridge]: 在模块中找到钩子init, 调用")
 
@@ -216,11 +216,11 @@ class Runner:
             ast = builder.parse()
 
             # 传入 heap_run
-            father.var_ctx["heap_run"] = HEAP_RUN_INCLUDE
+            father.context["heap_run"] = HEAP_RUN_INCLUDE
             self.visits(ast.body, father)
 
             # 释放
-            father.var_ctx["heap_run"] = HEAP_RUN_DEFAULT
+            father.context["heap_run"] = HEAP_RUN_DEFAULT
 
             return
 
@@ -242,11 +242,11 @@ class Runner:
         builder = Builder(toks)
         ast = builder.parse()
         # 传入 heap_run
-        father.var_ctx["heap_run"] = HEAP_RUN_INCLUDE
+        father.context["heap_run"] = HEAP_RUN_INCLUDE
         self.visits(ast.body, father)
 
         # 释放
-        father.var_ctx["heap_run"] = HEAP_RUN_DEFAULT
+        father.context["heap_run"] = HEAP_RUN_DEFAULT
 
         self.include_path.pop()  # 弹出
         self.include_file.pop()  # 弹出
@@ -264,7 +264,7 @@ class Runner:
                 args_list.append(replace_args[idx])
                 idx += 1
             elif isinstance(arg, Variable):  # 处理变量
-                args.append(father.var_ctx[arg.name])
+                args.append(father.context[arg.name])
             else:
                 args_list.append(arg)
 
@@ -417,11 +417,11 @@ class Runner:
         args_list = self.expr_args(node.args, father)
 
         # 查找函数对象
-        if node.name not in father.var_ctx:
+        if node.name not in father.context:
             self.hook_raise_error(NotDefine(node.name, -1))
             return
 
-        func_obj = father.var_ctx[node.name]
+        func_obj = father.context[node.name]
 
         if isfunction(func_obj):
             # 调用前检查参数数量
@@ -438,20 +438,20 @@ class Runner:
         for name, data in zip(func_obj.args, args_list):
             args_dict[name] = data
 
-        func_obj.var_ctx.clear()  # 清除所有的记录
+        func_obj.context.clear()  # 清除所有的记录
         return_var_name = []  # 记录返回之后的变量
 
         # 传入了参数但是全局变量没有传入
 
-        for var_name in father.var_ctx:
+        for var_name in father.context:
             var_name: str
             if var_name.isupper():
-                func_obj.var_ctx[var_name] = father.var_ctx[var_name]
+                func_obj.context[var_name] = father.context[var_name]
                 return_var_name.append(var_name)
-        func_obj.var_ctx = {
+        func_obj.context = {
             **args_dict,
-            **func_obj.var_ctx,
-            **father.var_ctx,
+            **func_obj.context,
+            **father.context,
         }  # 参数
 
         func_obj.stack.clear()  # 清空stack
@@ -460,7 +460,7 @@ class Runner:
 
         info("[Runner]: 存储全局")
         for var_name in return_var_name:
-            father.var_ctx[var_name] = func_obj.var_ctx[var_name]
+            father.context[var_name] = func_obj.context[var_name]
 
         if value:  # 有返回值
             value.reverse()
@@ -496,7 +496,7 @@ class Runner:
         val = self.expr_args([node.val], father)[0]
 
         for i in val:
-            father.var_ctx[iter_name] = i  # Bound the varibles
+            father.context[iter_name] = i  # Bound the varibles
             ret_val = self.visits(node.body, father)  # 调用代码
 
             if ret_val != None:
