@@ -1,15 +1,15 @@
-# Web_get
+# Weblib_make_req
 
-通过get来请求网址
+生成一个req
 
 ## 用法
 
 ```
-web_get <String>;
+weblib_make_req;
 ```
 
 ## 返回值
 
-```<IO>```
+```<Req>```
 
 [返回上级](../index.md)

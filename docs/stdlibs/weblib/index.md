@@ -5,7 +5,11 @@
 提供一些基本网络操作.
 
 ## Funcs
-- [web_get](func/web_get.md)
+- [weblib_get](func/weblib_get.md)
+- [weblib_getcode](func/weblib_getcode.md)
+- [weblib_make_req](func/weblib_make_req.md)
+- [weblib_req_add_header](func/weblib_req_add_header.md)
+- [weblib_send_req](func/weblib_send_req.md)
 
 
 ## Vars
