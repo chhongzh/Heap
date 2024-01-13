@@ -31,4 +31,5 @@ HEAP_LIBS = {
     "builtin": "builtin.heap",
     "print_it": "print_it.heap",
     "prompt": "prompt.heap",
+    "containers": "containers.heap",
 }
