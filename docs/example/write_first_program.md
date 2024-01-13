@@ -2,17 +2,20 @@
 
 很高兴你能认识Heap这一门编程语言. 所有的编程语言都从`Hello World`开始的, 接下来就让我们试试吧.
 
-由于Heap是堆栈式编程语言, 我们需要先把`Hello World`放到堆栈.
+在`Heap`中, `println`函数可以输出任意内容到`stdout`中.
+
 ```
-push "Hello World";
+# HelloWorld.heap
+println "Hello World";
 ```
 
-接着我们已经往堆栈里放入了字符串`Hello World`, 随后输出它.
+接下来运行它
+
 ```
-push "Hello World";
-print;
+$ heap run HelloWorld.heap
+Hello World
 ```
 
-很好, 你已经学会在Heap中输出文本了.
+大功告成, 你已经学会了如何输出内容到`stdout`中了!
 
 [下一节](what_is_your_name.md)
