@@ -5,6 +5,7 @@
 数组的实现.
 
 ## Funcs
+- [array](func/array.md)
 - [array_pop](func/arraypop.md)
 - [array_append](func/arrayappend.md)
 
