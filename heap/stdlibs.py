@@ -24,6 +24,7 @@ LIBS = {
     "os": "heap_os",
     "ios": "heap_ios",
     "queue": "heap_queue",
+    "time": "heap_time",
 }
 HEAP_LIBS = {
     "functionic": "functionic.heap",
