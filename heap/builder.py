@@ -198,10 +198,13 @@ class Builder:
                 case "input":
                     meta_info = self.tok.meta
                     self.advance()  # Input
-                    if self.tok.type in (ID, REPLACE):  # 变量表达式
-                        title = self.make_var()
-                    else:
-                        title = self.tok.value
+
+                    title = (
+                        self.make_var()
+                        if self.tok.type in (ID, REPLACE)
+                        else self.tok.value
+                    )
+
                     self.eat([OBJ])  # title
                     self.eat([SEM])  # SEM  # sem
                     t = Input(title)
@@ -334,11 +337,11 @@ class Builder:
 
             return None, None, None, body
         self.advance()  # skip IF,ELIF,ELSE,ENDIF
-        l1 = self.make_var()
+        l1 = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
         self.advance()
         op = self.tok.value
         self.advance()
-        l2 = self.make_var()
+        l2 = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
         self.advance()
 
         self.eat([COLON])  # skip SEM
@@ -520,7 +523,9 @@ class Builder:
 
         self.advance()  # skip keyword
 
-        iter_item = self.make_var()
+        iter_item = (
+            self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
+        )
         body = []
 
         self.advance()  # skip list
