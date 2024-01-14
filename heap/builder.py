@@ -398,13 +398,13 @@ class Builder:
         "匹配while语句"
 
         self.advance()  # skip while
-        expr1 = self.make_var()
+        expr1 = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
 
         self.advance()
         op = self.tok.value
 
         self.advance()
-        expr2 = self.make_var()
+        expr2 = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
 
         self.advance()  # skip expr2
         self.eat([COLON])  # skip :
