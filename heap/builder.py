@@ -435,7 +435,7 @@ class Builder:
 
         name = self.tok.value
         self.advance()  # skip NAME
-        value = self.make_var()
+        value = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
         self.advance()  # skip VALUE
 
         return Set(name, value)
