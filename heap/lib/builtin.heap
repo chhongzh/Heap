@@ -5,6 +5,7 @@
 true   = 1; # 非零即真
 false  = 0;
 
+# println, 输出内容并换行
 func println contents:
     printl contents;
 
@@ -12,6 +13,7 @@ func println contents:
     print;
 endfunc
 
+# printl, 输出内容但不换行
 func printl contents:
     get contents;
     print;
