@@ -144,7 +144,7 @@ class Builder:
                     t = Add()
                     t.meta_info = meta_info
 
-                    return
+                    return t
                 case "pop":
                     self.advance()  # pop
                     meta_info = self.tok.meta
