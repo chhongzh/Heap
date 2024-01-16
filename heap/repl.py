@@ -39,7 +39,7 @@ def print_and_stop(error):
 
 
 def heap_repl() -> None:
-    """Heap repr主函数"""
+    """Heap repl主函数"""
 
     info("[REPR]: OK to init. Ready for input.")
 
