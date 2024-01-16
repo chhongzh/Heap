@@ -284,10 +284,10 @@ class Runner:
             if len(node.l1s) + 1 == len(node.bodys):
                 return_value = None
 
-                for l1, op, l2, body in zip(
+                for iter_l1, op, iter_l2, body in zip(
                     node.l1s, node.ops, node.l2s, node.bodys[:-1]
                 ):
-                    temp_data = self.expr_args([l1, l2], father, False)
+                    temp_data = self.expr_args([iter_l1, iter_l2], father, False)
                     l1 = temp_data[0]
                     l2 = temp_data[1]
 
@@ -312,8 +312,10 @@ class Runner:
                     return self.visits(node.bodys[-1], father)
 
             elif len(node.l1s) == len(node.bodys):
-                for l1, op, l2, body in zip(node.l1s, node.ops, node.l2s, node.bodys):
-                    temp_data = self.expr_args([l1, l2], father, False)
+                for iter_l1, op, iter_l2, body in zip(
+                    node.l1s, node.ops, node.l2s, node.bodys
+                ):
+                    temp_data = self.expr_args([iter_l1, iter_l2], father, False)
                     l1 = temp_data[0]
                     l2 = temp_data[1]
 
