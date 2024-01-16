@@ -264,7 +264,7 @@ class Runner:
                 args_list.append(replace_args[idx])
                 idx += 1
             elif isinstance(arg, Variable):  # 处理变量
-                args.append(father.context[arg.name])
+                args_list.append(father.context[arg.name])
             else:
                 args_list.append(arg)
 
