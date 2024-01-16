@@ -100,7 +100,7 @@ def heap_repr() -> None:
         ast_tree.context = var_ctx  # 上下文
         ast_tree.command = command  # 上下文
 
-        r = Runner(ast_tree, old)
+        r = Runner(ast_tree, old, False, var_ctx)
         try:
             r.run()
         except CatchError:
@@ -114,5 +114,7 @@ def heap_repr() -> None:
             NEED_PRINT_NEW_LINE = False  # 释放
 
         print(">", ast_tree.stack)  # 输出
+
+        var_ctx = r.root.context
 
         del l, b  # 清理
