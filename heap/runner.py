@@ -184,7 +184,7 @@ class Runner:
             else:
                 info(f"[Runner]: 没有返回值")
 
-        if root_value:
+        if root_value is not None:
             father.stack.append(root_value)  # 别忘了将最终结果返回去
 
     def load_module(self, path: str, father: Func | Root):
