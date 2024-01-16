@@ -38,7 +38,7 @@ def print_and_stop(error):
     raise CatchError()
 
 
-def heap_repr() -> None:
+def heap_repl() -> None:
     """Heap repr主函数"""
 
     info("[REPR]: OK to init. Ready for input.")

@@ -11,7 +11,7 @@ Heap @ 2023
 import click
 
 from heap import Lexer, Builder, Runner
-from heap.repr import heap_repr
+from heap.repr import heap_repl
 from heap import loader
 from heap.version_info import HEAP_VERSION_STR
 
@@ -53,6 +53,7 @@ def run(filepath, showlog, args):
     b = Builder(toks, filepath)
     root = b.parse()
 
+    print(root)
     r = Runner(root, dirname(filepath))
     r.root.context["heap_argv"] = args
     r.run()
@@ -62,9 +63,9 @@ def run(filepath, showlog, args):
 
 
 @__wrapper.command()
-def repr():  # pylint:disable=W0622
-    """REPR环境"""
-    heap_repr()
+def repl():  # pylint:disable=W0622
+    """REPL环境"""
+    heap_repl()
 
 
 __wrapper()
