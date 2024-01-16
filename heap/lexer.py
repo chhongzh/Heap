@@ -72,7 +72,7 @@ class Lexer:
             elif self.current == "#":
                 self.advance()
                 self.comment_match()
-            elif self.current == "-":
+            elif self.current == "-" and self.content[self.pos + 1] == ">":
                 self.advance()
                 if self.current == ">":
                     self.tok.append(
