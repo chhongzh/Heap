@@ -222,6 +222,15 @@ class Builder:
                     hook.print_error(SyntaxErr(self.tok.value, self.pos, "未知的符号"))
 
                     return None
+
+        elif (
+            self.tok.type in (OBJ, REPLACE, ID) and self.toks[self.pos + 1].type == LINK
+        ):
+            meta_info = self.tok.meta
+            t = self.match_link()
+            t.meta_info = meta_info
+            return t
+
         elif self.tok.type == ID:
             has_next_tok = (len(self.toks) - self.pos) > 1
             if has_next_tok:
@@ -241,12 +250,6 @@ class Builder:
 
             return t
 
-        elif self.tok.type in (OBJ, REPLACE) and self.toks[self.pos + 1].type == LINK:
-            meta_info = self.tok.meta
-            t = self.match_link()
-            t.meta_info = meta_info
-            return t
-
         self.catch_error()  # 捕捉错误(无法识别的tok)
         self.advance()
 
@@ -258,9 +261,9 @@ class Builder:
 
         self.eat([EQUAL])
 
-        value = self.tok.value if self.tok.type != REPLACE else Replace
+        value = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
 
-        self.eat([OBJ, REPLACE])
+        self.eat([OBJ, REPLACE, ID])
 
         self.eat([SEM])
 
@@ -269,11 +272,11 @@ class Builder:
     def match_link(self):
         """捕捉Match Link"""
 
-        value = self.tok.value if self.tok.type != REPLACE else Replace
+        value = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
         call_chain = []
         arg_chain = []
 
-        self.eat([OBJ, REPLACE])
+        self.eat([OBJ, REPLACE, ID])
 
         while self.tok.type != SEM:
             arg = []
@@ -283,12 +286,13 @@ class Builder:
             self.eat([ID])
 
             while self.tok.type not in (SEM, LINK):
-                if self.tok.type == REPLACE:
-                    arg.append(Replace)
-                else:
-                    arg.append(self.tok.value)
+                arg.append(
+                    self.make_var()
+                    if self.tok.type in (ID, REPLACE)
+                    else self.tok.value
+                )
 
-                self.eat([REPLACE, OBJ])
+                self.eat([REPLACE, OBJ, ID])
 
             arg_chain.append(arg)
 
