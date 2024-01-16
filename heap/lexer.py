@@ -120,7 +120,7 @@ class Lexer:
                             ),
                         )
                     )
-            elif self.current in ("=", "<", ">"):
+            elif self.current in ("!", "=", "<", ">"):
                 self.tok.append(self.match_equal())
             else:
                 if self.current == "\n":
