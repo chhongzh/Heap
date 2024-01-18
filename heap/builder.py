@@ -244,9 +244,6 @@ class Builder:
             and self.has_next_tok
             and self.toks[self.pos + 1].type == EQUAL
         ):
-            next_tok = self.toks[self.pos + 1]
-            next_tok: Token
-
             meta_info = self.tok.meta
 
             t = self.match_assignment()
