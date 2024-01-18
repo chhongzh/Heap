@@ -53,7 +53,7 @@ class Builder:
             self.tok = None
             self.has_next_tok = False
         else:
-            if self.pos > len(self.toks) - 1:
+            if self.pos >= len(self.toks) - 1:
                 self.has_next_tok = False
             else:
                 self.has_next_tok = True
