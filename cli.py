@@ -20,7 +20,7 @@ from heap.version_info import HEAP_VERSION_STR
 crack_deepth()
 
 try:
-    from heap.compie_info import IS_COMPILE, COMPILE_DATE
+    from heap.compile_info import IS_COMPILE, COMPILE_DATE
 except ModuleNotFoundError:
     IS_COMPILE = False
     COMPILE_DATE = None
