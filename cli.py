@@ -13,7 +13,11 @@ import click
 from heap import Lexer, Builder, Runner
 from heap.repl import heap_repl
 from heap import loader
+from heap.common import crack_deepth
 from heap.version_info import HEAP_VERSION_STR
+
+# !!! 防止递归深度
+crack_deepth()
 
 try:
     from heap.compie_info import IS_COMPILE, COMPILE_DATE
