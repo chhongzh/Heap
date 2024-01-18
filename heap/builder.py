@@ -42,6 +42,7 @@ class Builder:
         self.root = []
         self.will_raise_next = None
         self.file_path = file_path
+        self.has_next_tok = None
 
         info("[Builder]: 就绪")
 
@@ -50,7 +51,12 @@ class Builder:
         self.pos += 1
         if self.pos >= len(self.toks):
             self.tok = None
+            self.has_next_tok = False
         else:
+            if self.pos + 1 == len(self.toks) - 1:
+                self.has_next_tok = True
+            else:
+                self.has_next_tok = False
             self.tok = self.toks[self.pos]
 
     def eat(self, types: list):
@@ -224,7 +230,9 @@ class Builder:
                     return None
 
         elif (
-            self.tok.type in (OBJ, REPLACE, ID) and self.toks[self.pos + 1].type == LINK
+            self.tok.type in (OBJ, REPLACE, ID)
+            and self.has_next_tok
+            and self.toks[self.pos + 1].type == LINK
         ):
             meta_info = self.tok.meta
             t = self.match_link()
@@ -232,8 +240,7 @@ class Builder:
             return t
 
         elif self.tok.type == ID:
-            has_next_tok = (len(self.toks) - self.pos) > 1
-            if has_next_tok:
+            if self.has_next_tok:
                 next_tok = self.toks[self.pos + 1]
                 next_tok: Token
                 if next_tok.type == EQUAL:
@@ -381,7 +388,7 @@ class Builder:
         args = []
         self.advance()
 
-        while self.tok.type != SEM:
+        while self.tok is not None and self.tok.type != SEM:
             if self.tok.type == REPLACE:
                 args.append(Replace)
             elif self.tok.type == ID:
