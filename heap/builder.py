@@ -389,6 +389,15 @@ class Builder:
             else:
                 args.append(self.tok.value)
             self.advance()
+
+        if self.tok is None:
+            hook.raise_error(
+                SyntaxErr(
+                    None,
+                    -1,
+                    f'在行{self.toks[self.pos - 1].meta.line_no}. 一处调用从未被关闭. (缺少";"?)',
+                )
+            )
         self.eat([SEM])  # SEM
         return Call(name, args)
 
