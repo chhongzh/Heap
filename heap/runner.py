@@ -47,7 +47,7 @@ from .asts import (
     While,
     Iter,
 )
-from .loader import loader
+from .common import loader
 from .stdlibs import HEAP_LIBS, LIBS
 from . import Lexer, Builder
 from . import hook

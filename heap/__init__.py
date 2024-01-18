@@ -8,7 +8,7 @@ from .lexer import Lexer
 from .builder import Builder
 from .runner import Runner
 
-from .loader import loader
+from .common import loader
 
 __all__ = [
     # Lexer
@@ -18,5 +18,5 @@ __all__ = [
     # Runner
     "Runner",
     # loader
-    "loader",
+    "common",
 ]
