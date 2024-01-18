@@ -164,9 +164,14 @@ class Runner:
         self.running_ast.pop()
 
     def expr_get(self, node: Get, father: Root | Func):
-        if node.name not in father.context.keys():
-            self.hook_raise_error(NotDefine(f"变量:{node.name}, 并未创建, 但却被访问了"))
-        father.stack.append(father.context[node.name])
+        father.stack.append(self.try_get(node.name, father))
+
+    def try_get(self, ctx_name: str, father: Root | Func):
+        """通过变量名获取值"""
+
+        if ctx_name not in father.context:
+            self.hook_raise_error(NotDefine("", -1, f"变量:{ctx_name}, 并未创建, 但却被访问了"))
+        return father.context[ctx_name]
 
     def expr_link(self, node: LinkExpr, father: Root | Func):
         """解析Link语句"""
@@ -264,7 +269,7 @@ class Runner:
                 args_list.append(replace_args[idx])
                 idx += 1
             elif isinstance(arg, Variable):  # 处理变量
-                args_list.append(father.context[arg.name])
+                args_list.append(self.try_get(arg.name, father))
             else:
                 args_list.append(arg)
 
