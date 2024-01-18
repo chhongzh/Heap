@@ -76,6 +76,7 @@ class Runner:
         if need_inject_module:
             self.load_module("builtin", self.root)  # 注入内建库
             self.load_module("_py_builtin", self.root)  # 注入内建库
+            self.load_module("_help", self.root)  # 注入内建库
 
         # 魔法变量:
         self.root.context["heap_excutable"] = sys.executable

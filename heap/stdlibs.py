@@ -25,6 +25,7 @@ LIBS = {
     "ios": "heap_ios",
     "queue": "heap_queue",
     "time": "heap_time",
+    "pen": "heap_pen",
 }
 HEAP_LIBS = {
     "functionic": "functionic.heap",
@@ -33,4 +34,5 @@ HEAP_LIBS = {
     "print_it": "print_it.heap",
     "prompt": "prompt.heap",
     "containers": "containers.heap",
+    "_help": "help.heap",
 }
