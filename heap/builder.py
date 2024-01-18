@@ -239,17 +239,21 @@ class Builder:
             t.meta_info = meta_info
             return t
 
+        elif (
+            self.tok.type == ID
+            and self.has_next_tok
+            and self.toks[self.pos + 1].type == EQUAL
+        ):
+            next_tok = self.toks[self.pos + 1]
+            next_tok: Token
+
+            meta_info = self.tok.meta
+
+            t = self.match_assignment()
+            t.meta_info = meta_info
+
+            return t
         elif self.tok.type == ID:
-            if self.has_next_tok:
-                next_tok = self.toks[self.pos + 1]
-                next_tok: Token
-                if next_tok.type == EQUAL:
-                    meta_info = self.tok.meta
-
-                    t = self.match_assignment()
-                    t.meta_info = meta_info
-
-                    return t
             meta_info = self.tok.meta
 
             t = self.match_call()
