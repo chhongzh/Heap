@@ -7,3 +7,5 @@
 
 HEAP_RUN_INCLUDE = "include"
 HEAP_RUN_DEFAULT = "default"
+
+DEEPTH = 2**31 - 1
