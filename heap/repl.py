@@ -15,8 +15,8 @@ from .log import info
 
 NEED_PRINT_NEW_LINE = False
 FIRST_RUN = True
-info("[REPR]: Repr mode is on.")
-info("[REPR]: Inject and hook the function.")
+info("[REPL]: Repr mode is on.")
+info("[REPL]: Inject and hook the function.")
 
 
 class CatchError(Exception):
@@ -42,7 +42,7 @@ def print_and_stop(error):
 def heap_repl() -> None:
     """Heap repl主函数"""
 
-    info("[REPR]: OK to init. Ready for input.")
+    info("[REPL]: OK to init. Ready for input.")
 
     global NEED_PRINT_NEW_LINE, FIRST_RUN
 
