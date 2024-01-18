@@ -53,10 +53,10 @@ class Builder:
             self.tok = None
             self.has_next_tok = False
         else:
-            if self.pos + 1 == len(self.toks) - 1:
-                self.has_next_tok = True
-            else:
+            if self.pos > len(self.toks) - 1:
                 self.has_next_tok = False
+            else:
+                self.has_next_tok = True
             self.tok = self.toks[self.pos]
 
     def eat(self, types: list):
