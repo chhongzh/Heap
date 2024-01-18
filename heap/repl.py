@@ -14,6 +14,7 @@ from .log import info
 
 
 NEED_PRINT_NEW_LINE = False
+FIRST_RUN = True
 info("[REPR]: Repr mode is on.")
 info("[REPR]: Inject and hook the function.")
 
@@ -43,7 +44,7 @@ def heap_repl() -> None:
 
     info("[REPR]: OK to init. Ready for input.")
 
-    global NEED_PRINT_NEW_LINE
+    global NEED_PRINT_NEW_LINE, FIRST_RUN
 
     print(f"Heap Lang V{HEAP_VERSION_STR}")
     print('输入 "exit;" 来退出. "help;" 来查看帮助. "\'" 启用多行输入(再次输入则关闭多行输入).')
@@ -100,7 +101,9 @@ def heap_repl() -> None:
         ast_tree.context = var_ctx  # 上下文
         ast_tree.command = command  # 上下文
 
-        r = Runner(ast_tree, old, False, var_ctx)
+        should_inject_lib = bool(ln - 1)  # 非零即真, ln 默认为 1 , 所以为 True
+        r = Runner(ast_tree, old, should_inject_lib, var_ctx)
+
         try:
             r.run()
         except CatchError:
