@@ -32,4 +32,5 @@ HEAP_EXPORT_FUNC = {
     "system_exec": exec,
     "system_get_stdout": system_get_stdout,
     "system_set_stdout": system_set_stdout,
+    "system_get_stack_size": system_get_stack_size,
 }
