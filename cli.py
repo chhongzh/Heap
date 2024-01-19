@@ -15,9 +15,14 @@ from heap.repl import heap_repl
 from heap import loader
 from heap.common import crack_deepth
 from heap.version_info import HEAP_VERSION_STR
+from sys import platform as SYS_PLATFORM
 
 # !!! 防止递归深度
 crack_deepth()
+
+# 加强输入
+if SYS_PLATFORM != "win32":
+    import readline
 
 try:
     from heap.compile_info import IS_COMPILE, COMPILE_DATE
