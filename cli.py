@@ -57,7 +57,6 @@ def run(filepath, showlog, args):
     b = Builder(toks, filepath)
     root = b.parse()
 
-    print(root)
     r = Runner(root, dirname(filepath))
     r.root.context["heap_argv"] = args
     r.run()
