@@ -24,6 +24,10 @@ def system_set_stdout(_: Root | Func, stdout):
     sys.stdout = stdout
 
 
+def system_get_stack_size(f: Root | Func):
+    return len(f.stack)
+
+
 HEAP_EXPORT_FUNC = {
     "system_exec": exec,
     "system_get_stdout": system_get_stdout,
