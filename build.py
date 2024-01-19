@@ -48,7 +48,7 @@ except:
 chdir("../")
 
 make_archive(
-    f"dist-{HEAP_VERSION_STR}-{system()}-{machine()}",
+    f"heap-{HEAP_VERSION_STR}-{system()}-{machine()}",
     "zip",
     f"dist",
 )
