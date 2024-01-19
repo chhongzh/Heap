@@ -26,6 +26,7 @@ LIBS = {
     "queue": "heap_queue",
     "time": "heap_time",
     "pen": "heap_pen",
+    "base64": "heap_base64",
 }
 HEAP_LIBS = {
     "functionic": "functionic.heap",
