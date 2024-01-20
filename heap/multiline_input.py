@@ -6,7 +6,7 @@ def multiline_input(end="'") -> list:
     buffer = []
 
     while True:
-        line = input("... ")
+        line = input(". ")
         if line == end:
             break
         buffer.append(line)
