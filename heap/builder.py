@@ -206,7 +206,7 @@ class Builder:
                     self.advance()  # Input
 
                     title = (
-                        self.make_var()
+                        self.variable_or_replace()
                         if self.tok.type in (ID, REPLACE)
                         else self.tok.value
                     )
@@ -269,7 +269,11 @@ class Builder:
 
         self.eat([EQUAL])
 
-        value = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
+        value = (
+            self.variable_or_replace()
+            if self.tok.type in (ID, REPLACE)
+            else self.tok.value
+        )
 
         self.eat([OBJ, REPLACE, ID])
 
@@ -280,7 +284,11 @@ class Builder:
     def match_link(self):
         """捕捉Match Link"""
 
-        value = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
+        value = (
+            self.variable_or_replace()
+            if self.tok.type in (ID, REPLACE)
+            else self.tok.value
+        )
         call_chain = []
         arg_chain = []
 
@@ -295,7 +303,7 @@ class Builder:
 
             while self.tok.type not in (SEM, LINK):
                 arg.append(
-                    self.make_var()
+                    self.variable_or_replace()
                     if self.tok.type in (ID, REPLACE)
                     else self.tok.value
                 )
@@ -328,7 +336,7 @@ class Builder:
 
         return If(l1s, ops, l2s, bodys)
 
-    def make_var(self):
+    def variable_or_replace(self):
         if self.tok.type == REPLACE:
             return Replace
 
@@ -349,11 +357,19 @@ class Builder:
 
             return None, None, None, body
         self.advance()  # skip IF,ELIF,ELSE,ENDIF
-        l1 = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
+        l1 = (
+            self.variable_or_replace()
+            if self.tok.type in (ID, REPLACE)
+            else self.tok.value
+        )
         self.advance()
         op = self.tok.value
         self.advance()
-        l2 = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
+        l2 = (
+            self.variable_or_replace()
+            if self.tok.type in (ID, REPLACE)
+            else self.tok.value
+        )
         self.advance()
 
         self.eat([COLON])  # skip SEM
@@ -422,13 +438,21 @@ class Builder:
         "匹配while语句"
 
         self.advance()  # skip while
-        expr1 = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
+        expr1 = (
+            self.variable_or_replace()
+            if self.tok.type in (ID, REPLACE)
+            else self.tok.value
+        )
 
         self.advance()
         op = self.tok.value
 
         self.advance()
-        expr2 = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
+        expr2 = (
+            self.variable_or_replace()
+            if self.tok.type in (ID, REPLACE)
+            else self.tok.value
+        )
 
         self.advance()  # skip expr2
         self.eat([COLON])  # skip :
@@ -459,7 +483,11 @@ class Builder:
 
         name = self.tok.value
         self.advance()  # skip NAME
-        value = self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
+        value = (
+            self.variable_or_replace()
+            if self.tok.type in (ID, REPLACE)
+            else self.tok.value
+        )
         self.advance()  # skip VALUE
 
         return Set(name, value)
@@ -545,7 +573,9 @@ class Builder:
         self.advance()  # skip keyword
 
         iter_item = (
-            self.make_var() if self.tok.type in (ID, REPLACE) else self.tok.value
+            self.variable_or_replace()
+            if self.tok.type in (ID, REPLACE)
+            else self.tok.value
         )
         body = []
 
