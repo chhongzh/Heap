@@ -94,6 +94,8 @@ def heap_repl() -> None:
         try:
             ast_tree = b.parse()
         except CatchError:
+            if code == "exit":
+                print('> TIPS: 您看起来好像缺少了";", 若想退出REPL, 输入"exit;"')
             continue
 
         ast_tree.stack = stack  # 上下文
