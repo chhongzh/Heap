@@ -74,7 +74,6 @@ def heap_repl() -> None:
             # 如果空直接跳过
             continue
 
-        ln += 1
         if code == "exit;":
             # 退出
             break
@@ -101,7 +100,7 @@ def heap_repl() -> None:
         ast_tree.context = var_ctx  # 上下文
         ast_tree.command = command  # 上下文
 
-        should_inject_lib = bool(ln - 1)  # 非零即真, ln 默认为 1 , 所以为 True
+        should_inject_lib = not bool(ln - 1)  # 非零即真, ln 默认为 1 , 所以为 True
         r = Runner(ast_tree, old, should_inject_lib, var_ctx)
 
         try:
@@ -121,3 +120,5 @@ def heap_repl() -> None:
         var_ctx = r.root.context
 
         del l, b  # 清理
+
+        ln += 1
