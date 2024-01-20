@@ -62,7 +62,7 @@ def heap_repl() -> None:
 
     while True:
         try:
-            code = input("> ")
+            code = input("< ")
         except KeyboardInterrupt:
             print()
             hook.raise_error(InputError("stdin", 0))
