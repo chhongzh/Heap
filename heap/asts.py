@@ -220,3 +220,15 @@ class LinkExpr(Node):
 
     def __repr__(self):
         return f"LinkExpr({repr(self.value)},{repr(self.call_chain)},{repr(self.arg_chain)})"
+
+
+class Try(Node):
+    def __init__(self, try_block: list, catch: list, catch_block: list):
+        self.try_block = try_block
+        self.catch = catch
+        self.catch_block = catch_block
+
+    def __repr__(self):
+        return (
+            f"Try({repr(self.try_block)},{repr(self.catch)},{repr(self.catch_block)})"
+        )

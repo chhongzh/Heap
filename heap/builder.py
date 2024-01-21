@@ -27,6 +27,7 @@ from .asts import (
     Input,
     While,
     Variable,
+    Try,
 )
 from .types import EQUAL, LINK, OBJ, SEM, KEYWORD, REPLACE, ID, COLON
 from . import hook
@@ -224,6 +225,11 @@ class Builder:
 
                     return t
 
+                case "try":
+                    t = self.match_try()
+
+                    return t
+
                 case _:
                     hook.print_error(SyntaxErr(self.tok.value, self.pos, "未知的符号"))
 
@@ -262,6 +268,46 @@ class Builder:
         self.advance()
 
         return None
+
+    def match_try(self):
+        meta_info = self.tok.meta
+
+        try_block = []
+        catches = []
+        blocks = []
+
+        self.eat([KEYWORD])
+        self.eat([COLON])
+
+        while self.tok.value not in ("catch"):
+            try_block.append(self.expr())
+
+        while self.tok.value != "endtry":
+            catch, body = self.try_const()
+
+            blocks.append(body)
+            catches.append(catch)
+
+        self.eat([KEYWORD])  # ENDIF
+
+        return Try(try_block, catches, blocks)
+
+    def try_const(self):
+        self.advance()  # skip try
+
+        catches = []
+        body = []
+
+        while self.tok.type != COLON:
+            catches.append(self.tok.value)
+            self.eat([ID])
+
+        self.eat([COLON])
+
+        while self.tok.value not in ("endtry", "catch"):
+            body.append(self.expr())
+
+        return catches, body
 
     def match_assignment(self):
         name = self.tok.value

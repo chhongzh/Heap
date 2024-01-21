@@ -36,4 +36,7 @@ KEYWORDS = [
     "endwhile",
     "iter",
     "enditer",
+    "try",
+    "catch",
+    "endtry",
 ]

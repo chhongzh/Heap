@@ -46,6 +46,7 @@ from .asts import (
     Command,
     While,
     Iter,
+    Try,
 )
 from .common import loader
 from .stdlibs import HEAP_LIBS, LIBS
@@ -69,6 +70,7 @@ class Runner:
         self.include_file = [self.root.file_path]
         # Running Blobk - 记录当前块
         self.running_block = []
+        self.catches = [[[], []]]
 
         # Running Ast - 记录运行Ast
         self.running_ast = []
@@ -160,6 +162,11 @@ class Runner:
             return self.expr_iter(node, father)
         elif isinstance(node, LinkExpr):
             self.expr_link(node, father)
+        elif isinstance(node, Try):
+            info("[Runner]: 进入了try语句")
+            self.catches.append([node.catch, node.catch_block, father])
+
+            self.visits(node.try_block, father)
 
         self.running_block.pop()
         self.running_ast.pop()
@@ -511,6 +518,16 @@ class Runner:
                 return ret_val
 
     def hook_raise_error(self, error: BaseError):
+        # Before Raise, Check "catches"
+
+        catch_names, will_run_blocks, father = self.catches[-1]
+        for names, block in zip(catch_names, will_run_blocks):
+            if error.__class__.__name__ in names:
+                info(f"[Runner]: Catch Err:{error.__class__.__name__}")
+                self.visits(block, father)
+
+                return
+
         print("Traceback: On running code, but error was generated.")
         print(
             f'On file: "{self.include_file[-1]}", line {self.running_ast[-1].meta_info.line_no}'
