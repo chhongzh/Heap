@@ -4,50 +4,97 @@ Heap是一门指令式编程语言
 ## Features
 - 变量支持
 ```
-> push 1;
-> set one $;
-> get one;
-< 1
+< set one 1;
+> []
+< get one;
+> [1]
 
-> # In the new version, you can do this.
-> two = 2;
-> get two;
-< 2;
+< # In the new version, you can do this.
+> []
+< two = 2;
+> []
+< get two;
+> [2]
 ```
 
 - 函数支持
 
 ```
-> func hello:
-..    println "Hello World!";
-..endfunc
-> hello;
-Hello world!
+< # "'" 代表多行输入
+> []
+< '
+. func hello:
+.     println "Hello World";
+. endfunc
+. '
+> []
+< hello;
+Hello World
+> []
 ```
 
 - 注释支持
   
 ```
-> # 一行注释
->  
+< # 一行注释
+> []
 ```
 
 - 导入支持
 
 ```
-> # Dir Tree:
-> # a:
-> # |-a.heap
-> # |-b:
-> # | |-c.heap
-> # main.heap
-> 
-> # main.heap
-> include "a/a.heap";
-> 
-> # a/a.heap
-> include "b/c.heap"
+< # Dir Tree:
+< # a:
+< # |-a.heap
+< # |-b:
+< # | |-c.heap
+< # main.heap
+< 
+< # main.heap
+< include "a/a.heap";
+< 
+< # a/a.heap
+< include "b/c.heap"
+```
 
+- 条件语句
+
+```
+< '
+. if 1==1:
+.     println "1 == 1!";
+. else:
+.     println "1 != 1!";
+. endif
+. '
+1 == 1!
+> []
+```
+
+- while语句
+```
+< '
+. i = 10 ;
+. while i >= 0:
+.     println i;
+.     get i;
+.     push 1;
+.     sub;
+.     i = $;
+. endwhile
+. '
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+> []
 ```
 
 ## Install
