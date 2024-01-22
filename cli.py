@@ -14,8 +14,11 @@ from heap import Lexer, Builder, Runner
 from heap.repl import heap_repl
 from heap import loader
 from heap.common import crack_deepth
+from heap.heapb import loader as byte_loader
+from heap.heapb import writer as byte_writer
 from heap.version_info import HEAP_VERSION_STR
 from sys import platform as SYS_PLATFORM
+from pathlib import Path
 
 # !!! 防止递归深度
 crack_deepth()
@@ -54,6 +57,32 @@ def run(filepath, showlog, args):
     运行Heap程序
     """
 
+    is_byte = ".heapb" == Path(filepath).suffix
+
+    if not is_byte:  # Normal File mode
+        dt = loader(filepath)
+
+        l = Lexer(dt)
+        toks = l.lex()
+
+        b = Builder(toks, filepath)
+        root = b.parse()
+
+    else:
+        root = byte_loader(filepath)
+
+    r = Runner(root, dirname(filepath))
+    r.root.context["heap_argv"] = args
+    r.run()
+
+    if showlog:
+        print(HEAP_IO.getvalue(), end="")
+
+
+@__wrapper.command()
+@click.argument("filepath", type=click.Path(exists=True))
+@click.argument("outputpath", type=click.Path())
+def build(filepath, outputpath):
     dt = loader(filepath)
 
     l = Lexer(dt)
@@ -62,12 +91,7 @@ def run(filepath, showlog, args):
     b = Builder(toks, filepath)
     root = b.parse()
 
-    r = Runner(root, dirname(filepath))
-    r.root.context["heap_argv"] = args
-    r.run()
-
-    if showlog:
-        print(HEAP_IO.getvalue(), end="")
+    byte_writer(root, f"{outputpath}.heapb")
 
 
 @__wrapper.command()
