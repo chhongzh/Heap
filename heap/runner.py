@@ -9,9 +9,11 @@ Heap的运行器,
 import sys
 from importlib import import_module
 from inspect import isfunction
+from pathlib import Path
 from os.path import exists, dirname, join, split, isfile, isdir, abspath
 from .log import info, debug, critical, error
 from .const_value import HEAP_RUN_INCLUDE, HEAP_RUN_DEFAULT
+from .heapb import loader as byte_loader
 
 from .error import (
     BaseError,
@@ -248,12 +250,18 @@ class Runner:
             self.hook_raise_error(IncludeError(path, -1, "Not a file."))
             return
 
-        content = loader(path)
-        lexer = Lexer(content)
-        toks = lexer.lex()
+        is_byte = ".heapb" == Path(path).suffix
 
-        builder = Builder(toks)
-        ast = builder.parse()
+        if not is_byte:  # 若果不是byte文件
+            content = loader(path)
+            lexer = Lexer(content)
+            toks = lexer.lex()
+
+            builder = Builder(toks)
+            ast = builder.parse()
+        else:
+            ast = byte_loader(path)  # 加载文件,返回root
+
         # 传入 heap_run
         father.context["heap_run"] = HEAP_RUN_INCLUDE
         self.visits(ast.body, father)
