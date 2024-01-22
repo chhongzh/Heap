@@ -16,6 +16,7 @@ from heap import loader
 from heap.common import crack_deepth
 from heap.heapb import loader as byte_loader
 from heap.heapb import writer as byte_writer
+from heap.common import make_shebang
 from heap.version_info import HEAP_VERSION_STR
 from sys import platform as SYS_PLATFORM
 from pathlib import Path
@@ -98,6 +99,18 @@ def build(filepath, outputpath):
 def repl():  # pylint:disable=W0622
     """REPL环境"""
     heap_repl()
+
+
+@__wrapper.group()
+def config():
+    """提供一些配置生成"""
+
+
+@config.command()
+def shebang():
+    """生成shebang line"""
+
+    click.echo(f"#! {make_shebang()}")
 
 
 __wrapper()
