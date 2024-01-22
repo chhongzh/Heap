@@ -70,7 +70,7 @@ class Runner:
         self.include_file = [self.root.file_path]
         # Running Blobk - 记录当前块
         self.running_block = []
-        self.catches = [[[], []]]
+        self.catches = [[[], [], None]]
 
         # Running Ast - 记录运行Ast
         self.running_ast = []
