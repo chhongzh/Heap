@@ -51,13 +51,13 @@ def _heap_init(father: Root | Func):
 
 
 HEAP_EXPORT_FUNC = {
-    "ceil": ceil,
-    "cos": cos,
-    "fabs": fabs,
-    "floor": floor,
-    "gcd": gcd,
-    "getpi": getpi,
-    "pow": pow,
-    "sin": sin,
-    "sqrt": sqrt,
+    "math_ceil": ceil,
+    "math_cos": cos,
+    "math_fabs": fabs,
+    "math_floor": floor,
+    "math_gcd": gcd,
+    "math_getpi": getpi,
+    "math_pow": pow,
+    "math_sin": sin,
+    "math_sqrt": sqrt,
 }
