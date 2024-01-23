@@ -14,6 +14,6 @@ def to_json(father: Func | Root, heap_object):
 
 
 HEAP_EXPORT_FUNC = {
-    "from_json": from_json,
-    "to_json": to_json,
+    "json_load": from_json,
+    "json_dump": to_json,
 }

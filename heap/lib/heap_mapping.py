@@ -34,10 +34,10 @@ def get_values(_: Root | Func, mapping: dict):
 
 
 HEAP_EXPORT_FUNC = {
-    "get_key": get_key,
-    "get_keys": get_keys,
-    "get_values": get_values,
+    "mapping_get_key": get_key,
+    "mapping_get_keys": get_keys,
+    "mapping_get_values": get_values,
     "mapping": mapping,
-    "pop_key": pop_key,
-    "set_key": set_key,
+    "mapping_pop_key": pop_key,
+    "mapping_set_key": set_key,
 }
