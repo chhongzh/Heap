@@ -207,18 +207,12 @@ class Lexer:
 
         return val
 
-    def is_num(self):
-        """判断是否是数字"""
-
-        self.current: str | None
-        return self.current == "-" or self.current.isdecimal()
-
     def number_check(self):
         """判断是否是数字部分"""
 
-        return self.isnum() or self.current == "-" or self.current == "."
+        return self.is_num() or self.current == "-" or self.current == "."
 
-    def isnum(self):
+    def is_num(self):
         "检查是否是数字"
 
         return self.current.isdecimal()  # 使用isdigit会将部分非正常数字的unicode字符算入
@@ -242,7 +236,7 @@ class Lexer:
                 else:
                     dot = True
                     cache.append(".")
-            elif self.isnum():
+            elif self.is_num():
                 cache.append(self.current)
             else:
                 hook.raise_error(LexerError("", self.pos, "Invalid number."))
