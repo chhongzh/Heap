@@ -85,155 +85,154 @@ class Builder:
     def expr(self):
         """解析一句表达式"""
         if self.tok.type == KEYWORD:
-            match self.tok.value:
-                case "func":
-                    t = self.match_fn()
+            if self.tok.value == "func":
+                t = self.match_fn()
 
-                    return t
-                case "div":
-                    meta_info = self.tok.meta
-                    self.advance()
-                    self.eat([SEM])  # SEM
-                    temp = Div()
-                    temp.meta_info = meta_info
+                return t
+            elif self.tok.value == "div":
+                meta_info = self.tok.meta
+                self.advance()
+                self.eat([SEM])  # SEM
+                temp = Div()
+                temp.meta_info = meta_info
 
-                    return
-                case "mul":
-                    self.advance()
-                    meta_info = self.tok.meta
-                    self.eat([SEM])  # SEM
+                return
+            elif self.tok.value == "mul":
+                self.advance()
+                meta_info = self.tok.meta
+                self.eat([SEM])  # SEM
 
-                    temp = Mul()
-                    temp.meta_info = meta_info
+                temp = Mul()
+                temp.meta_info = meta_info
 
-                    return temp
-                case "set":
-                    meta_info = self.tok.meta
+                return temp
+            elif self.tok.value == "set":
+                meta_info = self.tok.meta
 
-                    t = self.match_set()
-                    self.eat([SEM])  # SEM  # SEM
+                t = self.match_set()
+                self.eat([SEM])  # SEM  # SEM
 
-                    t.meta_info = meta_info
+                t.meta_info = meta_info
 
-                    return t
-                case "get":
-                    meta_info = self.tok.meta
+                return t
+            elif self.tok.value == "get":
+                meta_info = self.tok.meta
 
-                    t = self.match_get()
-                    self.eat([SEM])  # SEM
+                t = self.match_get()
+                self.eat([SEM])  # SEM
 
-                    t.meta_info = meta_info
-                    return t
-                case "push":
-                    meta_info = self.tok.meta
+                t.meta_info = meta_info
+                return t
+            elif self.tok.value == "push":
+                meta_info = self.tok.meta
 
-                    t = self.match_push()
-                    self.eat([SEM])  # SEM  # SEM
+                t = self.match_push()
+                self.eat([SEM])  # SEM  # SEM
 
-                    t.meta_info = meta_info
+                t.meta_info = meta_info
 
-                    return t
-                case "print":
-                    self.advance()  # PRINT
-                    meta_info = self.tok.meta
+                return t
+            elif self.tok.value == "print":
+                self.advance()  # PRINT
+                meta_info = self.tok.meta
 
-                    self.eat([SEM])  # SEM  # SEM
+                self.eat([SEM])  # SEM  # SEM
 
-                    temp = Print()
-                    temp.meta_info = meta_info
+                temp = Print()
+                temp.meta_info = meta_info
 
-                    return Print()
-                case "add":
-                    self.advance()  # ADD
-                    meta_info = self.tok.meta
-                    self.eat([SEM])  # SEM  # SEM
+                return Print()
+            elif self.tok.value == "add":
+                self.advance()  # ADD
+                meta_info = self.tok.meta
+                self.eat([SEM])  # SEM  # SEM
 
-                    t = Add()
-                    t.meta_info = meta_info
+                t = Add()
+                t.meta_info = meta_info
 
-                    return t
-                case "pop":
-                    self.advance()  # pop
-                    meta_info = self.tok.meta
-                    self.eat([SEM])  # SEM  # SEM
+                return t
+            elif self.tok.value == "pop":
+                self.advance()  # pop
+                meta_info = self.tok.meta
+                self.eat([SEM])  # SEM  # SEM
 
-                    t = Pop()
-                    t.meta_info = meta_info
-                    return t
-                case "sub":
-                    self.advance()  # SUB
-                    meta_info = self.tok.meta
-                    self.eat([SEM])  # SEM  # SEM
+                t = Pop()
+                t.meta_info = meta_info
+                return t
+            elif self.tok.value == "sub":
+                self.advance()  # SUB
+                meta_info = self.tok.meta
+                self.eat([SEM])  # SEM  # SEM
 
-                    t = Sub()
-                    t.meta_info = meta_info
-                    return t
-                case "return":
-                    meta_info = self.tok.meta
-                    self.advance()  # RETURN
-                    t = self.match_return()
+                t = Sub()
+                t.meta_info = meta_info
+                return t
+            elif self.tok.value == "return":
+                meta_info = self.tok.meta
+                self.advance()  # RETURN
+                t = self.match_return()
 
-                    t.meta_info = meta_info
+                t.meta_info = meta_info
 
-                    return t
-                case "while":
-                    meta_info = self.tok.meta
-                    t = self.match_while()
-                    t.meta_info = meta_info
-                    return t
-                case "if":
-                    meta_info = self.tok.meta
+                return t
+            elif self.tok.value == "while":
+                meta_info = self.tok.meta
+                t = self.match_while()
+                t.meta_info = meta_info
+                return t
+            elif self.tok.value == "if":
+                meta_info = self.tok.meta
 
-                    t = self.match_if()
-                    t.meta_info = meta_info
+                t = self.match_if()
+                t.meta_info = meta_info
 
-                    return t
-                case "include":
-                    meta_info = self.tok.meta
+                return t
+            elif self.tok.value == "include":
+                meta_info = self.tok.meta
 
-                    t = self.match_include()
-                    t.meta_info = meta_info
+                t = self.match_include()
+                t.meta_info = meta_info
 
-                    return t
-                case "command":
-                    meta_info = self.tok.meta
+                return t
+            elif self.tok.value == "command":
+                meta_info = self.tok.meta
 
-                    t = self.match_command()
-                    t.meta_info = meta_info
+                t = self.match_command()
+                t.meta_info = meta_info
 
-                    return t
-                case "input":
-                    meta_info = self.tok.meta
-                    self.advance()  # Input
+                return t
+            elif self.tok.value == "input":
+                meta_info = self.tok.meta
+                self.advance()  # Input
 
-                    title = (
-                        self.variable_or_replace()
-                        if self.tok.type in (ID, REPLACE)
-                        else self.tok.value
-                    )
+                title = (
+                    self.variable_or_replace()
+                    if self.tok.type in (ID, REPLACE)
+                    else self.tok.value
+                )
 
-                    self.eat([OBJ])  # title
-                    self.eat([SEM])  # SEM  # sem
-                    t = Input(title)
-                    t.meta_info = meta_info
-                    return t
+                self.eat([OBJ])  # title
+                self.eat([SEM])  # SEM  # sem
+                t = Input(title)
+                t.meta_info = meta_info
+                return t
 
-                case "iter":
-                    meta_info = self.tok.meta
-                    t = self.match_iter()
-                    t.meta_info = meta_info
+            elif self.tok.value == "iter":
+                meta_info = self.tok.meta
+                t = self.match_iter()
+                t.meta_info = meta_info
 
-                    return t
+                return t
 
-                case "try":
-                    t = self.match_try()
+            elif self.tok.value == "try":
+                t = self.match_try()
 
-                    return t
+                return t
 
-                case _:
-                    hook.print_error(SyntaxErr(self.tok.value, self.pos, "未知的符号"))
+            else:
+                hook.print_error(SyntaxErr(self.tok.value, self.pos, "未知的符号"))
 
-                    return None
+                return None
 
         elif (
             self.tok.type in (OBJ, REPLACE, ID)
