@@ -215,7 +215,9 @@ class Lexer:
     def is_num(self):
         "检查是否是数字"
 
-        return self.current.isdecimal()  # 使用isdigit会将部分非正常数字的unicode字符算入
+        return (
+            self.current.isdecimal()
+        )  # 使用isdigit会将部分非正常数字的unicode字符算入
 
     def num_match(self):
         """数字匹配"""
