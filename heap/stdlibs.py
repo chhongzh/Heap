@@ -27,6 +27,7 @@ LIBS = {
     "time": "heap_time",
     "pen": "heap_pen",
     "base64": "heap_base64",
+    "pager": "heap_pager",
 }
 HEAP_LIBS = {
     "functionic": "functionic.heap",
