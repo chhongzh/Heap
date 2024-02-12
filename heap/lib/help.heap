@@ -1,8 +1,0 @@
-# Heap 帮助
-
-# 这里存储了一些基础的帮助函数
-
-func help:
-    println "欢迎查看Heap的文档, ";
-    println "更多请查看https://chhongzh.github.io/#/docs/README";
-endfunc

@@ -1,5 +1,0 @@
-# python3 cli.py run <file_path> <..args>
-get heap_argv;
-push "Args:";
-print;
-print;

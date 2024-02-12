@@ -1,0 +1,24 @@
+# Heap V2的第一个Demo!
+# chhongzh @ 2024.2
+
+func bool check(int num){
+    var int after_sqrt = sqrt(num);
+    return (after_sqrt*after_sqrt) == num;
+}
+
+println("完全平方数判断器 V1.0 (Powered by Heap V2)");
+println("输入.exit退出!");
+
+while(true){
+    var string in;
+    in = readln("请输入数字 < ");
+
+    if(in == ".exit"){break;}
+    in = to_int(in);
+
+    if(check(in)){
+        println(in," 是完全平方数!");
+    }else{
+        println(in," 不是完全平方数!");
+    }
+}

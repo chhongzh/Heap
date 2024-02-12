@@ -11,6 +11,7 @@ BlockStatement = pyparsing.Forward()("BLOCK")
 ReturnStatement = pyparsing.Forward()("RETURN")
 AnyValue = pyparsing.Forward()("AnyValue")
 IfStatement = pyparsing.Forward()("IF")
+WhileStatement = pyparsing.Forward()("While")
 
 
 BinExpr = pyparsing.Forward()
@@ -56,6 +57,10 @@ Keyword_Return = pyparsing.Keyword("return")
 Keyword_If = pyparsing.Keyword("if")
 Keyword_Elif = pyparsing.Keyword("elif")
 Keyword_Else = pyparsing.Keyword("else")
+Keyword_While = pyparsing.Keyword("while")
+Keyword_Break = pyparsing.Keyword("break")
+Keyword_Continue = pyparsing.Keyword("continue")
+
 
 LParen = pyparsing.Suppress("(")
 RParen = pyparsing.Suppress(")")
@@ -129,15 +134,20 @@ TypeBound << Types + Identifier
 VarSet << Identifier + Set + BoolExpr
 ReturnStatement << Keyword_Return + (BoolExpr)
 
+WhileStatement << Keyword_While + LParen + BoolExpr + RParen + BlockStatement
+
 Statement << pyparsing.Group(
     pyparsing.MatchFirst(
         [
             ReturnStatement + End,
+            WhileStatement,
             (VarSet + End),
-            IfStatement,
-            (BoolExpr + End),
             VarDef + End,
+            IfStatement,
             FuncDef,
+            Keyword_Break + End,
+            Keyword_Continue + End,
+            (BoolExpr + End),
         ]
     )
 )

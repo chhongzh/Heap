@@ -7,7 +7,7 @@ class ASTNode:
 
     def eval(
         self, runner, context: dict
-    ) -> tuple[object, str]:  # 0: 返回的真实值, 1: 类型
+    ) -> tuple[object, str,bool,int]:  # 0: 返回的真实值, 1: 类型, 2: 是否return 3: (1: conntinue, 2: break , 0: nothing)
         raise NotImplementedError()
 
 
@@ -19,9 +19,9 @@ class Return(ASTNode):
         e = self.expr
         if isinstance(e, (BoolExpr, BinExpr, Var, Call)):
             e = e.eval(runner, context)
-            return e[0],e[1],True
+            return e[0],e[1],True,0
         else:
-            return e, get_type(e), True
+            return e, get_type(e), True,0
 
     def __repr__(self) -> str:
         return f"Return({repr(self.expr)})"
@@ -40,11 +40,11 @@ class BoolExpr(ASTNode):
         rr_left = None
         rr_right = None
         if isinstance(self.left, (BinExpr, BoolExpr, Call, Var)):
-            rr_left, _, brk_flag = self.left.eval(runner, context)
+            rr_left, _, brk_flag,ctn_or_brk = self.left.eval(runner, context)
         else:
             rr_left = self.left
         if isinstance(self.right, (BinExpr, BoolExpr, Call, Var)):
-            rr_right, _, brk_flag = self.right.eval(runner, context)
+            rr_right, _, brk_flag,ctn_or_brk = self.right.eval(runner, context)
         else:
             rr_right = self.right
 
@@ -52,27 +52,27 @@ class BoolExpr(ASTNode):
             case "==":
                 ll_val = rr_left == rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case "!=":
                 ll_val = rr_left != rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case ">=":
                 ll_val = rr_left >= rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case "<=":
                 ll_val = rr_left <= rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case ">":
                 ll_val = rr_left > rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case "<":
                 ll_val = rr_left < rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case _:
                 raise RuntimeError(f"No op:{repr(self)}")
 
@@ -90,11 +90,11 @@ class BinExpr(ASTNode):
         rr_left = None
         rr_right = None
         if isinstance(self.left, (BinExpr, BoolExpr, Call, Var)):
-            rr_left, _, brk = self.left.eval(runner, context)
+            rr_left, _, brk,__ = self.left.eval(runner, context)
         else:
             rr_left = self.left
         if isinstance(self.right, (BinExpr, BoolExpr, Call, Var)):
-            rr_right, _, brk = self.right.eval(runner, context)
+            rr_right, _, brk,__ = self.right.eval(runner, context)
         else:
             rr_right = self.right
 
@@ -102,19 +102,19 @@ class BinExpr(ASTNode):
             case "+":
                 ll_val = rr_left + rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case "-":
                 ll_val = rr_left - rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case "/":
                 ll_val = rr_left / rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case "*":
                 ll_val = rr_left * rr_right
                 ll_type = get_type(ll_val)
-                return ll_val, ll_type, False
+                return ll_val, ll_type, False,0
             case _:
                 raise RuntimeError(f"No op:{repr(self)}")
 
@@ -140,8 +140,10 @@ class Call(ASTNode):
         # Call FN
         
         if self.name not in context["object"]:
-            raise RuntimeError("Not found or not callable!")
-        if(context["typebound"][self.name] not in ('callable','py_callable')):
+            raise RuntimeError(f"Not found or not callable!, {self.name}")
+        if(context["typebound"][self.name] not in ('callable','py_callable',
+                                                   'builtin_function_or_method', # Fix call error
+                                                   )):
             raise RuntimeError(f"{context["typebound"][self.name]} is not a callable!")
         
         if(context["typebound"][self.name] == 'callable'): # Heap callable
@@ -178,7 +180,10 @@ class Call(ASTNode):
                 ctx["typebound"][arg_name] = arg_type
 
             for statement in fn_obj.body:
-                ll_val, ll_type, brk = statement.eval(runner, ctx)
+                ll_val, ll_type, brk,ctn_or_brk = statement.eval(runner, ctx)
+
+                if ctn_or_brk!=0:
+                    return None,None,False,ctn_or_brk
 
                 if brk:
                     type = get_type(ll_val)
@@ -199,12 +204,13 @@ class Call(ASTNode):
                     else:
                         raise RuntimeError("没有可以的cast", ll_type, type)
 
-                    return ll_val, ll_type, True
-            return None,None,False
+                    return ll_val, ll_type, True,0
                 
-        elif(context["typebound"][self.name] == 'py_callable'):
+            return None,None,False,0
+                
+        elif(context["typebound"][self.name] in ('py_callable','builtin_function_or_method')):
             val = context["object"][self.name](runner,context,*args)
-            return val,get_type(val),False
+            return val,get_type(val),False,0
 
 class VarDecl(ASTNode):
     def __init__(
@@ -225,7 +231,7 @@ class VarDecl(ASTNode):
         if self.val != None:
             ll_value=self.val
             if(isinstance(self.val,(Var,Call,BoolExpr,BinExpr))):
-                ll_value, ll_type, brk = self.val.eval(runner, context)
+                ll_value, ll_type, brk,_ = self.val.eval(runner, context)
                 if self.type == ll_type:
                     pass
                 elif self.type == "int":
@@ -241,7 +247,7 @@ class VarDecl(ASTNode):
         else:
             context["object"][self.name] = None
 
-        return None, None, False
+        return None, None, False,0
 
 
 class Var(ASTNode):
@@ -252,7 +258,7 @@ class Var(ASTNode):
         return f"Var({repr(self.name)})"
 
     def eval(self, runner, context: dict):
-        return context["object"][self.name], context["typebound"][self.name], False
+        return context["object"][self.name], context["typebound"][self.name], False,0
 
 
 class Func(ASTNode):
@@ -269,7 +275,7 @@ class Func(ASTNode):
         ctx["object"][self.name] = self
         ctx["typebound"][self.name] = "callable"
 
-        return None, None, False
+        return None, None, False,0
 
 
 class VarSet(ASTNode):
@@ -281,9 +287,12 @@ class VarSet(ASTNode):
         return f"VarSet({repr(self.name)}, {repr(self.expr)})"
 
     def eval(self, runner, ctx: dict):
-        ctx["object"][self.name] = self.expr.eval(runner, ctx)[0]
+        if(isinstance(self.expr,(BinExpr,BoolExpr,Call,Var))):
+            ctx["object"][self.name] = self.expr.eval(runner, ctx)[0]
+        else:
+            ctx["object"][self.name] = self.expr
 
-        return None, None, False
+        return None, None, False,0
 
 """
 class Obj(ASTNode):
@@ -309,30 +318,97 @@ class If(ASTNode):
             for statements,expr in zip(self.statements[:-1],self.exprs):
                 if(expr.eval(runner,ctx)[0]):
                     for statement in statements:
-                        ll_val,ll_type,brk = statement.eval(runner,ctx)
+                        ll_val,ll_type,brk,ctn_or_brk = statement.eval(runner,ctx)
+
+                        if ctn_or_brk!=0:
+                            return None,None,False,ctn_or_brk
 
                         if(brk):
                             return ll_val,ll_type,brk
                     break
             else:
                 for statement in self.statements[-1]:
-                    ll_val,ll_type,brk = statement.eval(runner,ctx)
+                    ll_val,ll_type,brk,ctn_or_brk = statement.eval(runner,ctx)
+
+                    if ctn_or_brk!=0:
+                        return None,None,False,ctn_or_brk
 
                     if(brk):
-                        return ll_val,ll_type,brk
+                        return ll_val,ll_type,brk,0
                    
         else:
             for statements,expr in zip(self.statements,self.exprs):
                 if(expr.eval(runner,ctx)[0]):
                     for statement in statements:
-                        ll_val,ll_type,brk = statement.eval(runner,ctx)
+                        ll_val,ll_type,brk,ctn_or_brk = statement.eval(runner,ctx)
+
+                        if ctn_or_brk!=0:
+                            return None,None,False,ctn_or_brk
 
                         if(brk):
-                            return ll_val,ll_type,brk
+                            return ll_val,ll_type,brk,0
                     break
 
                 
-        return None,None,False
+        return None,None,False,0
 
     def __repr__(self) -> str:
         return f"If({repr(self.statements)}, {repr(self.exprs)})"
+
+class While(ASTNode):
+    def __init__(self,statements:list,expr):
+        self.statements=statements
+        self.expr=expr
+
+
+    def eval(self,runner,ctx):
+        while True:
+            if(isinstance(self.expr,(BinExpr,BoolExpr,Call,Var))):
+                ll_flag,ll_type,_,__=self.expr.eval(runner,ctx)
+            else:
+                ll_flag = self.expr
+            if(not ll_flag):
+                break
+            
+            rr_type = 0
+
+            for stmt in self.statements:
+                ll_val,ll_type,brk,ctn_or_brk=stmt.eval(runner,ctx)
+
+                if(ctn_or_brk==1):
+                    rr_type = ctn_or_brk
+                    break
+                elif (ctn_or_brk == 2):
+                    rr_type = ctn_or_brk
+                    break
+
+                if(brk):
+                    return ll_val,ll_type,brk,0
+            if(rr_type==1):
+                continue
+            elif(rr_type==2):
+                break
+        return None,None,False,0
+
+    def __repr__(self) -> str:
+        return f"While({repr(self.statements)}, {repr(self.expr)})"
+
+class Break(ASTNode):
+    def __init__(self):
+        ...
+
+    def eval(self,runner,ctx):
+        return None,None,False,2
+
+    def __repr__(self) -> str:
+        return f"Break()"
+
+class Continue(ASTNode):
+    def __init__(self):
+        ...
+
+    def eval(self,runner,ctx):
+        return None,None,False,1
+
+    def __repr__(self) -> str:
+        return f"Continue()"

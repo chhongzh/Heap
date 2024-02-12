@@ -1,6 +1,0 @@
-# 方便导入所有的容器
-
-include "queue";
-include "array";
-include "mapping";
-include "string";

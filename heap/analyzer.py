@@ -1,4 +1,17 @@
-from .ast import BinExpr, BoolExpr, Call, Func, If, Var, VarDecl, Return, VarSet
+from .ast import (
+    BinExpr,
+    BoolExpr,
+    Break,
+    Call,
+    Func,
+    If,
+    Var,
+    VarDecl,
+    Return,
+    VarSet,
+    While,
+    Continue,
+)
 
 
 class Analyzer:
@@ -27,6 +40,12 @@ class Analyzer:
                 return VarDecl(statement[2], statement[1])
         elif len(statement) == 3 and statement[1] == "=":
             return VarSet(statement[0], self.parse_expr(statement[2]))
+        elif len(statement) == 1 and statement[0] == "continue":
+            return Continue()
+        elif len(statement) == 1 and statement[0] == "break":
+            return Break()
+        elif statement[0] == "while":
+            return While(self.parse_lot(statement[2]), self.parse_expr(statement[1]))
         elif statement[0] == "func":
             ret_type = statement[1]
             name = statement[2]
