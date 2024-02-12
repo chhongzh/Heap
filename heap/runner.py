@@ -180,7 +180,9 @@ class Runner:
         """通过变量名获取值"""
 
         if ctx_name not in father.context:
-            self.hook_raise_error(NotDefine("", -1, f"变量:{ctx_name}, 并未创建, 但却被访问了"))
+            self.hook_raise_error(
+                NotDefine("", -1, f"变量:{ctx_name}, 并未创建, 但却被访问了")
+            )
         return father.context[ctx_name]
 
     def expr_link(self, node: LinkExpr, father: Root | Func):
@@ -475,6 +477,7 @@ class Runner:
             **args_dict,
             **func_obj.context,
             **father.context,
+            "heap_args": args_list,
         }  # 参数
 
         func_obj.stack.clear()  # 清空stack
