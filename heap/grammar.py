@@ -88,7 +88,7 @@ FnCall << (
 )
 
 AnyValue << pyparsing.MatchFirst(
-    [String, Float, Number, Keyword_False, Keyword_True, Identifier]
+    [Float, String, Number, Keyword_False, Keyword_True, Identifier]
 )
 
 Factor << pyparsing.MatchFirst(
