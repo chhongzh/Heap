@@ -1,0 +1,7 @@
+# 定义一个函数greet, 有一个名为name的string类型的参数
+func void greet(string name){
+    println("Hello, "+name+"!");
+}
+
+greet("heap");    # 调用函数
+greet("chhongzh");# 再一次调用函数
