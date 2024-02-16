@@ -14,11 +14,11 @@ while(true){
     in = readln("请输入数字 < ");
 
     if(in == ".exit"){break;}
-    in = to_int(in);
+    var int num = to_int(in);
 
-    if(check(in)){
-        println(in," 是完全平方数!");
+    if(check(num)){
+        println(num," 是完全平方数!");
     }else{
-        println(in," 不是完全平方数!");
+        println(num," 不是完全平方数!");
     }
 }
