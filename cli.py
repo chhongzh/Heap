@@ -13,6 +13,7 @@ from heap import lex
 from heap import reader
 from heap.analyzer import Analyzer
 from heap.runner import Runner
+from heap.compiler import compile_from_builded_ast
 from sys import platform as SYS_PLATFORM
 
 
@@ -51,6 +52,19 @@ def run(filepath):
     tree = a.parse()
     r = Runner(tree)
     r.run()
+
+
+@__wrapper.command()
+@click.argument("filepath", type=click.Path(exists=True))
+def compile(filepath):
+    fdata = reader(filepath)
+    toks = lex(fdata).as_list()
+
+    a = Analyzer(toks)
+    tree = a.parse()
+    compile_from_builded_ast(
+        tree, cpp_path=filepath + ".cpp", binary_path=filepath + ".out"
+    )
 
 
 __wrapper()
