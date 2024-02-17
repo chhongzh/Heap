@@ -17,8 +17,6 @@ from .ast import (
 class Analyzer:
     def __init__(self, toks: list) -> None:
         self._toks = toks
-        self._pos = -1
-        self._current = None
 
     def parse(self):
         return self.parse_lot(self._toks)
