@@ -123,3 +123,79 @@ def hypot(runner, ctx: dict, *num):
 
 def isqrt(runner, ctx: dict, num):
     return math.isqrt(num)
+
+
+def lcm(runner, ctx: dict, *num):
+    return math.lcm(*num)
+
+
+def ldexp(runner, ctx: dict, num, b):
+    return math.ldexp(num, b)
+
+
+def lgamma(runner, ctx: dict, num):
+    return math.lgamma(num)
+
+
+def log(runner, ctx: dict, num, b):
+    return math.log(num, b)
+
+
+def log10(runner, ctx: dict, num):
+    return math.log10(num)
+
+
+def log1p(runner, ctx: dict, num):
+    return math.log1p(num)
+
+
+def log2(runner, ctx: dict, num):
+    return math.log2(num)
+
+
+def modf(runner, ctx: dict, num):
+    return math.modf(num)
+
+
+def perm(runner, ctx: dict, *num):
+    return math.perm(*num)
+
+
+def prod(runner, ctx: dict, *num):
+    return math.prod(*num)
+
+
+def radians(runner, ctx: dict, num):
+    return math.radians(num)
+
+
+def remainder(runner, ctx: dict, num, x):
+    return math.remainder(num, x)
+
+
+def sin(runner, ctx: dict, num):
+    return math.sin(num)
+
+
+def sinh(runner, ctx: dict, num):
+    return math.sinh(num)
+
+
+def sumprod(runner, ctx: dict, num, q):
+    return math.sumprod(num, q)
+
+
+def tan(runner, ctx: dict, num):
+    return math.tan(num)
+
+
+def tanh(runner, ctx: dict, num):
+    return math.tanh(num)
+
+
+def trunc(runner, ctx: dict, num):
+    return math.trunc(num)
+
+
+def ulp(runner, ctx: dict, num):
+    return math.ulp(num)

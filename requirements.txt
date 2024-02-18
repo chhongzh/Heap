@@ -1,3 +1,4 @@
 click==8.1.7
 nuitka==2.0.2
 pyparsing==3.1.1
+prompt-toolkit==3.0.43
