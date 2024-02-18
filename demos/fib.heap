@@ -5,4 +5,7 @@ func int fib(int n){
     return fib(n-1)+fib(n-2);
 }
 
-println(fib(10));
+var int cnt;
+cnt = to_int(readln("算第几位斐波那契数字?"));
+
+println("第",cnt,"位数字是",fib(cnt),"!");
