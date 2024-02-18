@@ -13,7 +13,9 @@ class Runner:
         if bind:
             bind_from_module(self.context, _builtin)
             bind_from_module(self.context, _cast)
-            bind_from_module(self.context, _math)
+            bind_from_module(
+                self.context, _math, re_write_method=True, add_prefix="math_"
+            )
 
     def run(self):
         return self._run_lot(self.toks, self.context)

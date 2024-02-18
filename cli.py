@@ -67,4 +67,11 @@ def compile(filepath):
     )
 
 
+@__wrapper.command()
+def repl():
+    from heap.repl import repl as heap_repl
+
+    heap_repl()
+
+
 __wrapper()
