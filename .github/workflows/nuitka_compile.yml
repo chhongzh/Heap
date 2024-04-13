@@ -1,0 +1,32 @@
+name: Nuitka Compile
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Nuitka
+        run: |
+          if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            sudo apt-get update
+            sudo apt-get install -y nuitka
+          elif [[ "$OSTYPE" == "darwin"* ]]; then
+            brew install nuitka
+          elif [[ "$OSTYPE" == "msys" ]]; then
+            choco install nuitka
+          fi
+
+      - name: Compile with Nuitka
+        run: nuitka cli.py --standalone
